@@ -1,0 +1,23 @@
+{% extends '_base.html' %}
+{% load static %}
+
+{% block page_title %}نوبت‌های {{ doctor.name }}{% endblock page_title %}
+
+{% block content %}
+<div class="container my-4">
+    <h3 class="mb-3">نوبت‌های آزاد {{ doctor.name }}</h3>
+
+    {% if appointments %}
+        <div class="list-group">
+            {% for appointment in appointments %}
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+                <span>{{ appointment.date }} - {{ appointment.time }}</span>
+                <a href="{% url 'nobat' appointment.id %}" class="btn btn-success btn-sm">رزرو نوبت</a>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-muted">نوبت آزاد موجود نیست.</p>
+    {% endif %}
+</div>
+{% endblock content %}

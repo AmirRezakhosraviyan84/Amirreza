@@ -1,0 +1,14 @@
+{% extends '_base.html' %}
+{%load static%}
+{% block page_title %}appointments{% endblock page_title %}
+
+{% block content %}
+<h2>{{doctor.name}}رزرو آنلاین نوبت</h2>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">ثبت نوبت</button>
+</form>
+
+
+{% endblock content %}

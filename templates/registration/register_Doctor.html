@@ -1,0 +1,75 @@
+{% extends "_base.html" %}
+{%load static%}
+{% block page_title %}doctor_register{% endblock page_title %}
+
+
+{% block content %}
+
+
+    <div class="form-container">
+        <h2>ثبت اطلاعات پزشک</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-submit">ثبت اطلاعات</button>
+        </form>
+    </div>
+
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f8;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .form-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .form-control {
+            border-radius: 10px;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            font-size: 1rem;
+            border-radius: 10px;
+            background-color: #007bff;
+            color: #fff;
+            transition: 0.3s;
+        }
+
+        .btn-submit:hover {
+            background-color: #0069d9;
+        }
+
+        @media (max-width: 576px) {
+            .form-container {
+                padding: 20px;
+            }
+        }
+    </style>
+
+
+{% endblock content %}

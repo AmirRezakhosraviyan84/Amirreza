@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <title>انتخاب دکتر</title>
+</head>
+<body>
+    <h1>انتخاب دکتر برای دیدن نوبت‌ها</h1>
+
+    <ul>
+        {% for doctor in doctors %}
+            <li>
+                {{ doctor.name }} - {{ doctor.specialty.name }}
+                <a href="{% url 'appointments_by_date' doctor.id %}">دیدن نوبت‌ها</a>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

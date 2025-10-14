@@ -1,0 +1,257 @@
+{% extends '_base.html' %}
+{% load static %}
+
+{% block page_title %}city_detail{% endblock page_title %}
+
+{% block content %}
+<div class="hero" style="background-image: linear-gradient(0deg, rgba(52,110,209,0.8), rgba(52,110,209,0.8)), url('{% static 'images/hero-pattern.png' %}'); background-size: cover; background-position: center;">
+    <div class="hero-content">
+       <h3>دکترتو {{ city.name }} - خدمات پزشکی و نوبت‌دهی دکترتو در {{ city.name }}</h3>
+    </div>
+</div>
+
+<div class="nobat-box">
+  <h3>نوبت‌دهی پزشکان دکترتو در {{ city.name }}</h3>
+
+  <div class="specialty-box">
+    <div class="specialty-header">
+      <h4>تخصص‌های دکترتو در {{ city.name }}</h4>
+      <a href="#">مشاهده همه</a>
+    </div>
+
+    <!-- Swiper کاروسل -->
+    <div class="swiper mySwiper">
+      <div class="swiper-wrapper">
+        {% for m in Most %}
+        <div class="swiper-slide">
+          <div class="show-box">
+            <img src="{{ m.image.url }}" alt="{{ m.title }}">
+            <a href ="{% url 'visited_detail' m.pk %}">{{m.title}}</a>
+            <p><i class="fas fa-map-marker-alt"></i> {{ city.name }}</p>
+          </div>
+        </div>
+        {% empty %}
+        <p>باکسی وجود ندارد</p>
+        {% endfor %}
+      </div>
+
+      <!-- دکمه‌های navigation -->
+      <div class="swiper-button-next"></div>
+      <div class="swiper-button-prev"></div>
+    </div>
+
+  </div>
+<div class ='txt'></div><h4>دکتر علائم و درمان بیماری‌های مختلف در {{city.name}}</h4>
+
+ <div class="swiper mySwiper">
+      <div class="swiper-wrapper">
+        {% for s in sy %}
+        <div class="swiper-slide">
+          <div class="show-box">
+            <a href ="{% url 'Symptoms_and_disease_detail' s.pk %}">{{s.title}}</a>
+           <div class='txt'> <p><i class="fas fa-map-marker-alt"></i> {{ city.name }}</p></div>
+          </div>
+        </div>
+        {% empty %}
+        <p>باکسی وجود ندارد</p>
+        {% endfor %}
+      </div>
+
+    <div class="swiper-button-next"></div>
+      <div class="swiper-button-prev"></div>
+</div>
+<div class ='txt'>
+    <h4>جدیدترین پزشکان دکترتو در {{city.name}}</h4>
+</div>
+
+<div class="swiper mySwiper">
+    <div class="swiper-wrapper">
+        {% for d in doc %}
+        <div class="swiper-slide">
+            <div class="show-box">
+                <img src="#" alt="{{d.name}}" class="doctor-img">
+                <div class="doctor-info">
+                    <a href="{% url 'doctor_list' %}">{{ d.name }}</a>
+                    <p><i class="fas fa-map-marker-alt"></i> {{ d.specialty.name }}</p>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p>باکسی وجود ندارد</p>
+        {% endfor %}
+    </div>
+
+    <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev"></div>
+</div>
+
+<div class="nobat-box">
+  <h3>هزینه خدمات دکترتو کلینیک در {{ city.name }}</h3>
+
+  <div class="specialty-box">
+    <div class="specialty-header">
+      <a href="#">مشاهده همه</a>
+    </div>
+    
+    <div class="swiper mySwiper">
+      <div class="swiper-wrapper">
+        {% for s in ser %}
+        <div class="swiper-slide">
+          <div class="show-box">
+            <img src="{{ s.image.url }}" alt="{{ sp.name }}">
+            <h6>هزینه خدمات</h6>
+            <a href ="{% url 'visited_detail' s.pk %}">{{s.name}}</a>
+            <p><i class="fas fa-map-marker-alt"></i> {{ city.name }}</p>
+          </div>
+        </div>
+        {% empty %}
+        <p>باکسی وجود ندارد</p>
+        {% endfor %}
+      </div>
+
+      <!-- دکمه‌های navigation -->
+      <div class="swiper-button-next"></div>
+      <div class="swiper-button-prev"></div>
+    </div>
+
+  </div> 
+   <h3>هزینه خدمات دکترتو کلینیک </h3>
+   <a href="#">مشاهده همه</a>
+ <div class="swiper mySwiper">
+      <div class="swiper-wrapper">
+        {% for s in ser %}
+        <div class="swiper-slide">
+          <div class="show-box">
+            <img src="{{ s.image.url }}" alt="{{ sp.name }}">
+            <h6>هزینه خدمات</h6>
+            <a href ="{% url 'visited_detail' s.pk %}">{{s.name}}</a>
+            <p><i class="fas fa-map-marker-alt"></i> {{ city.name }}</p>
+          </div>
+        </div>
+        {% empty %}
+        <p>باکسی وجود ندارد</p>
+        {% endfor %}
+         
+      </div>
+ <div class="swiper-button-next"></div>
+      <div class="swiper-button-prev"></div>
+  </div>
+ 
+</div>
+<div class="nobat-box">
+  <h3>هزینه خدمات دکترتو کلینیک در {{ city.name }}</h3>
+   <div class="swiper mySwiper">
+      <div class="swiper-wrapper">
+        {% for m in medical %}
+        <div class="swiper-slide">
+          <div class="show-box">
+            <img src="{{ m.image.url }}" alt="{{ m.title }}">
+            <a href ="{% url 'type_detail' m.pk %}">{{m.title}}</a>
+            <p><i class="fas fa-map-marker-alt"></i> {{ city.name }}</p>
+          </div>
+        </div>
+        {% empty %}
+        <p>باکسی وجود ندارد</p>
+        {% endfor %}
+
+         
+      </div>
+
+  <div class="specialty-box">
+    <div class="specialty-header">
+    <div class ='txt'>  <h4>خدمات کلینیکی و درمانگاهی دکترتو در {{ city.name }}</h4></div>
+      <a href="#">مشاهده همه</a>
+    </div>
+
+    <!-- Swiper کاروسل -->
+    <div class="swiper mySwiper">
+      <div class="swiper-wrapper">
+        {% for s in ser %}
+        <div class="swiper-slide">
+          <div class="show-box">
+            <img src="{{ m.image.url }}" alt="{{ m.title }}">
+            <a href ="{% url 'visited_detail' s.pk %}">{{s.name}}</a>
+            <p><i class="fas fa-map-marker-alt"></i> {{ city.name }}</p>
+          </div>
+        </div>
+        {% empty %}
+        <p>باکسی وجود ندارد</p>
+        {% endfor %}
+      
+      </div>
+      
+   <div class="swiper-button-next"></div>
+      <div class="swiper-button-prev"></div>
+
+</div>
+
+</div>
+ <div class='txt'><h4>خدمات پاراکلینیکی و آزمایشگاهی دکترتو در {{ city.name }}</h4></div>
+ <div class="swiper mySwiper">
+      <div class="swiper-wrapper">
+        {% for p  in pc %}
+        <div class="swiper-slide">
+          <div class="show-box">
+            <a href ="{% url 'visited_detail' p.pk %}">{{p.name}}</a>
+            <p><i class="fas fa-map-marker-alt"></i> {{ city.name }}</p>
+          </div>
+        </div>
+        {% empty %}
+        <p>باکسی وجود ندارد</p>
+        {% endfor %}
+      
+      </div>
+      <div class="swiper-button-next"></div>
+      <div class="swiper-button-prev"></div>
+    </div>
+
+  </div>  
+<div class='txt'>
+  <h4>جدیدترین مراکز درمانی دکترتو در {{ city.name }}</h4>
+</div>
+
+{% if ph.exists %}
+<div class="swiper mySwiperPharmacy">
+  <div class="swiper-wrapper">
+    {% for p in ph %}
+    <div class="swiper-slide">
+      <div class="show-box">
+        <a href="{% url 'visited_detail' p.pk %}">{{ p.name }}</a>
+        <p><i class="fas fa-map-marker-alt"></i> {{ p.city.name }}</p>
+      </div>
+    </div>
+    {% empty %}
+    <p>باکسی وجود ندارد</p>
+    {% endfor %}
+  </div>
+
+  <!-- دکمه‌های navigation داخل Swiper -->
+  <div class="swiper-button-next"></div>
+  <div class="swiper-button-prev"></div>
+</div>
+{% else %}
+<p>داروخانه‌ای برای این شهر ثبت نشده است</p>
+{% endif %}
+
+<script>
+var swiper = new Swiper(".mySwiper", {
+  slidesPerView: 5 ,
+  spaceBetween: 20 ,
+  loop: true,
+  navigation: {
+    nextEl: ".swiper-button-next",
+    prevEl: ".swiper-button-prev",
+  },
+  breakpoints: {
+    0: { slidesPerView: 1 },
+    640: { slidesPerView: 2 },
+    1024: { slidesPerView: 3 }
+  }
+});
+</script>
+
+
+
+
+
+{% endblock %}

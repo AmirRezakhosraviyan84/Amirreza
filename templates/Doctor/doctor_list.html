@@ -1,0 +1,477 @@
+{% extends '_base.html' %}
+{% load static %}
+
+{% block page_title %}doctor_list{% endblock page_title %}
+
+{% block content %}
+<div class="container-fluid my-4">
+    <div class="row">
+        <!-- فیلترها -->
+        <div class="col-md-3" style ="padding-top:80px;">
+            <div class="my_box sticky-top p-3 shadow-sm" style="top: 80px; background: #fff; border-radius: 8px; padding-top:150px;">
+                <!-- تب‌ها ردیفی -->
+                <div class="d-flex justify-content-between mb-3">
+                    {% for tab in tabs %}
+                        <button class="btn btn-outline-secondary" type="button" data-tab="{{ tab.id }}">{{ tab.label }}</button>
+                    {% endfor %}
+                </div>
+
+                <!-- دکمه حذف فیلتر -->
+                {% if request.GET %}
+                <a href="{% url 'doctor_list' %}" class="btn btn-warning w-100 mb-3">حذف فیلترها</a>
+                {% endif %}
+
+                <!-- فرم‌ها برای هر تب -->
+                {% for tab in tabs %}
+                <div id="{{ tab.id }}" class="tab-content mb-3" style="{% if tab.id != 'clinic' %}display:none{% endif %};">
+                    <form method="get" action="{% url 'doctor_list' %}">
+                        <!-- تخصص -->
+                        <div class="mb-3">
+                            <label class="form-label">تخصص و فوق تخصص</label>
+                            <select name="specialty" class="form-select" onchange="this.form.submit()">
+                                <option value="">انتخاب کنید</option>
+                                {% for sp in specialties %}
+                                <option value="{{ sp.id }}" {% if request.GET.specialty == sp.id|stringformat:"s" %}selected{% endif %}>{{ sp.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        {% if tab.id == 'clinic' %}
+                        <!-- فیلترهای نوبت مطب -->
+                        <div class="mb-3">
+                            <label class="form-label">خدمات</label>
+                            <select name="service" class="form-select" onchange="this.form.submit()">
+                                <option value="">انتخاب کنید</option>
+                                {% for s in services %}
+                                <option value="{{ s.id }}" {% if request.GET.service == s.id|stringformat:"s" %}selected{% endif %}>{{ s.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">شهر</label>
+                            <select name="city" class="form-select" onchange="this.form.submit()">
+                                <option value="">انتخاب کنید</option>
+                                {% for c in cities %}
+                                <option value="{{ c.id }}" {% if request.GET.city == c.id|stringformat:"s" %}selected{% endif %}>{{ c.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">بیمه</label>
+                            <select name="insurance" class="form-select" onchange="this.form.submit()">
+                                <option value="">انتخاب کنید</option>
+                                {% for i in insurances %}
+                                <option value="{{ i.id }}" {% if request.GET.insurance == i.id|stringformat:"s" %}selected{% endif %}>{{ i.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        {% else %}
+                        <!-- فیلترهای مشاوره -->
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" name="urgent" value="1" {% if request.GET.urgent %}checked{% endif %} onchange="this.form.submit()">
+                            <label class="form-check-label">مشاوره فوری</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" name="available" value="1" {% if request.GET.available %}checked{% endif %} onchange="this.form.submit()">
+                            <label class="form-check-label">پزشکان دارای نوبت باز</label>
+                        </div>
+                        {% endif %}
+
+                        <div class="mb-3">
+                            <label class="form-label">جنسیت پزشک</label>
+                            <select name="gender" class="form-select" onchange="this.form.submit()">
+                                <option value="">انتخاب کنید</option>
+                                <option value="خانوم" {% if request.GET.gender == "خانوم" %}selected{% endif %}>خانوم</option>
+                                <option value="آقا" {% if request.GET.gender == "آقا" %}selected{% endif %}>آقا</option>
+                                <option value="فرقی نمی کند" {% if request.GET.gender == "فرقی نمی کند" %}selected{% endif %}>فرقی نمی کند</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- لیست پزشکان -->
+        <div class="col-md-9" style="max-height: calc(100vh - 100px); overflow-y: auto; padding-left: 15px;">
+            <h5 class="mb-3">لیست پزشکان</h5>
+
+            <div class='media-box mb-3'>
+                <div class='media-text'>نوبت‌دهی اینترنتی بهترین دکترهای ایران</div>
+            </div>
+
+            <!-- Sorting -->
+            <div class="sorting-box mb-3">
+                <div class="text-sorting">مرتب سازی بر اساس:</div>
+                <a href="?{% for k,v in request.GET.items %}{% if k != 'sort' %}{{k}}={{v}}&{% endif %}{% endfor %}sort=popular"
+                   class="{% if request.GET.sort == 'popular' %}active-sort{% endif %}">محبوب‌ترین</a>
+                <a href="?{% for k,v in request.GET.items %}{% if k != 'sort' %}{{k}}={{v}}&{% endif %}{% endfor %}sort=next"
+                   class="{% if request.GET.sort == 'next' %}active-sort{% endif %}">نزدیک‌ترین نوبت</a>
+                <a href="?{% for k,v in request.GET.items %}{% if k != 'sort' %}{{k}}={{v}}&{% endif %}{% endfor %}sort=successful"
+                   class="{% if request.GET.sort == 'successful' %}active-sort{% endif %}">بیشترین نوبت موفق</a>
+            </div>
+
+{% for doctor in doctors %}
+<div class="card mb-3 shadow-sm">
+    <div class="row g-0">
+        <!-- عکس دکتر -->
+        <div class="col-md-3">
+            {% if doctor.image %}
+                <img src="{{ doctor.image.url }}" class="img-fluid rounded-start" alt="{{ doctor.name }}">
+            {% else %}
+                <img src="{% static 'icon/najafi.jpg' %}" class="img-fluid rounded-start" alt="Doctor">
+            {% endif %}
+        </div>
+
+        <!-- اطلاعات دکتر -->
+        <div class="col-md-9">
+            <div class="card-body">
+                <h5 class="card-title">{{ doctor.name }}</h5>
+
+                <!-- تخصص‌ها -->
+                <p class="card-text text-muted">
+                    تخصص:
+                    {% if doctor.specialty.all %}
+                        {% for s in doctor.specialty.all %}
+                            {{ s.name }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        بدون تخصص
+                    {% endif %}
+                </p>
+
+                <!-- خدمات -->
+                <p class="card-text text-muted">
+                    خدمات:
+                    {% if doctor.services.all %}
+                        {% for svc in doctor.services.all %}
+                            {{ svc.name }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        بدون خدمات
+                    {% endif %}
+                </p>  
+                <!-- آدرس -->
+                <p class="card-text">{{ doctor.address }}</p>
+
+                <!-- امتیاز -->
+                
+
+                <!-- نوبت‌ها -->
+                {% if doctor.available_appointments %}
+                    <button class="btn btn-primary btn-sm mt-2"
+                            onclick="openAppointmentModal({{ doctor.pk }})">
+                        مشاهده و رزرو نوبت
+                    </button>
+                {% else %}
+                    <span class="text-muted">نوبت آزاد ندارد</span>
+                {% endif %}
+
+                <!-- لینک پروفایل -->
+                <p class="mt-2">
+                    <a href="{% url 'doctor_profile' doctor.pk %}">مشاهده پروفایل </a>
+                    <a href="{%url 'doctor-review' doctor.pk%}">امتیاز دهی به دکتر</a>
+                </p>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+        </div>
+    </div>
+</div>
+
+<!-- Modal یک بار در پایین صفحه -->
+<div id="appointmentModal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeModal()">&times;</span>
+    <div id="modal-body">
+      <!-- محتوای نوبت‌دهی اینجا لود میشه -->
+    </div>
+  </div>
+</div>
+
+<footer style="width:100%; background:#fff; border-top:1px solid #ddd; padding:30px 20px; direction:rtl; box-sizing:border-box;">
+
+  <!-- بخش بالا فوتر -->
+  <div class="top-footer" style="
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));
+    gap:30px;
+    width:100%;
+    box-sizing:border-box;
+  ">
+    <!-- خدمات -->
+    <div class="services">
+      <h3 style="font-size:1.1rem; font-weight:bold; margin-bottom:10px;">خدمات دکتروتو</h3>
+      <ul style="list-style:none; padding:0; margin:0;">
+        <li style="margin-bottom:6px;">
+          <a href="#" style="color:#333; text-decoration:none;">نوبت دهی مطب</a>
+          <a href="#" style="color:#333; text-decoration:none; margin-right:70px;">دکترتو کلینیک</a>
+        </li>
+        <li style="margin-bottom:6px;">
+          <a href="#" style="color:#333; text-decoration:none;">مشاوره تلفنی</a>
+          <a href="#" style="color:#333; text-decoration:none; margin-right:90px;">مراکز درمانی</a>
+        </li>
+        <li style="margin-bottom:6px;">
+          <a href="#" style="color:#333; text-decoration:none;">مشاوره متنی</a>
+          <a href="#" style="color:#333; text-decoration:none; margin-right:90px;">مجله سلامت</a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- صفحات -->
+    <div class="pages" style="text-align:right;">
+      <h3 style="font-size:1.1rem; font-weight:bold; margin-bottom:10px;">صفحات دکتروتو</h3>
+      <ul style="list-style:none; padding:0; margin:0;">
+        <li style="margin-bottom:6px;">
+          <a href="#" style="color:#333; text-decoration:none;">درباره ما</a>
+          <a href="#" style="color:#333; text-decoration:none; margin-right:60px;">قوانین و مقررات</a>
+        </li>
+        <li style="margin-bottom:6px;">
+          <a href="#" style="color:#333; text-decoration:none;">سوالات متداول</a>
+          <a href="#" style="color:#333; text-decoration:none; margin-right:20px;">قوانین ثبت نظر</a>
+        </li>
+        <li style="margin-bottom:6px;">
+          <a href="#" style="color:#333; text-decoration:none;">ثبت نام پزشکان</a>
+          <a href="#" style="color:#333; text-decoration:none; margin-right:20px;">تماس با ما</a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- در کنار شما -->
+    <div class="pages" style="text-align:right;">
+      <h3 style="font-size:1.1rem; font-weight:bold; margin-bottom:10px;">در کنار شما</h3>
+      <ul style="list-style:none; padding:0; margin:0;">
+        <li style="margin-bottom:6px;"><a href="#" style="color:#333; text-decoration:none;">تخصص های پزشکی</a></li>
+        <li style="margin-bottom:6px;"><a href="#" style="color:#333; text-decoration:none;">موقعیت های شغلی</a></li>
+      </ul>
+    </div>
+
+    <!-- اپلیکیشن -->
+    <div class="pages" style="text-align:left;">
+      <h2 style="font-size:1.1rem; font-weight:bold; margin-bottom:10px;">اپلیکیشن دکترتو را دریافت کنید</h2>
+      <div class="app-buttons" style="margin-top:10px; display:flex; flex-direction:column; gap:10px; align-items:flex-start;">
+        <a href="https://cafebazaar.ir/app/ir.hivatec.doctoreto" target="_blank" 
+           style="padding:14px 0; font-size:1rem; color:#4CAF50; text-decoration:none; border:2px solid #4CAF50; border-radius:8px; background-color:transparent; text-align:center; min-width:200px; display:block; transition:0.3s;">
+            دانلود از کافه بازار
+        </a>
+        <a href="https://doctoreto.com/direct_download/doctoreto-4.7.3.apk" target="_blank" 
+           style="padding:14px 0; font-size:1rem; color:#0070C9; text-decoration:none; border:2px solid #0070C9; border-radius:8px; background-color:transparent; text-align:center; min-width:200px; display:block; transition:0.3s;">
+           دانلود مستقیم نسخه اندروید 
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- خط جداکننده -->
+  <div style="width:100%; height:1px; background:#ddd; margin:30px 0;"></div>
+
+  <!-- بخش پایین فوتر -->
+  <div class="bottom-footer" style="display:flex; flex-wrap:wrap; justify-content:space-between; gap:20px; width:100%; box-sizing:border-box;">
+
+    <!-- بلوک توضیح + لوگو + دکمه بیشتر + تصاویر -->
+    <div class="description" style="text-align:right; max-width:400px;">
+      <img src="{% static 'icons/doctoreto-logo.png' %}" alt="لوگو" style="height:50px; margin-bottom:10px;">
+      <p id="short-text" style="
+          color:#555; 
+          font-size:0.9rem; 
+          line-height:1.4;
+          display:-webkit-box;
+          -webkit-line-clamp:3;
+          -webkit-box-orient:vertical;
+          overflow:hidden;
+          text-overflow:ellipsis;
+      ">
+        دکترتو ساده‌ترین راه نوبت‌ دهی اینترنتی و مشاوره آنلاین پزشکان ایران است...
+      </p>
+      <button id="read-more" style="background:none; border:none; color:#0070C9; cursor:pointer; font-size:0.9rem; padding:0; margin-top:5px;">بیشتر</button>
+
+      <div class="icons-row" style="display:flex; gap:15px; margin-top:15px; flex-wrap:wrap; justify-content:flex-start;">
+        <img src="{% static 'images/enamad.png' %}" alt="نماد 1" style="height:50px;">
+        <img src="{% static 'images/samandehi.png' %}" alt="نماد 2" style="height:50px;">
+        <img src="{% static 'images/etehadie-logo.png' %}" alt="نماد 3" style="height:50px;">
+        <img src="{% static 'images/saman-kish-logo.png' %}" alt="نماد 4" style="height:50px;">
+        <img src="{% static 'images/mellat.png' %}" alt="نماد 5" style="height:50px;">
+      </div>
+    </div>
+     <div class="social" style="text-align:right;">
+  <h4 style="margin-bottom:10px;">با ما در ارتباط باشید</h4>
+   <p>ایمیل:</p>
+  <!-- ایمیل با آیکون -->
+  <div style="display:flex; align-items:center; gap:8px;">
+    <img src="{% static 'icons/email.png' %}" alt="ایمیل" style="height:24px;">
+    <a href="mailto:info@doctoreto.com" style="color:#0070C9; text-decoration:none;">info@doctoreto.com</a>
+  </div>
+</div>
+<div class="social" style="text-align:right;">
+  <h4 style="margin-bottom:10px;">شبکه های اجتماعی</h4>
+  <!-- آیکون‌ها با تصویر -->
+  <a href="https://www.instagram.com" target="_blank" style="margin-left:10px;">
+    <img src="{% static 'icons/instagram--1364.png' %}" alt="اینستاگرام" style="width:30px; height:30px;">
+  </a>
+  <a href="https://www.telegram.org" target="_blank" style="margin-left:10px;">
+    <img src="{% static 'icons/telegram--1410.png' %}" alt="تلگرام" style="width:30px; height:30px;">
+  </a>
+  <a href="https://www.linkedin.com" target="_blank" style="margin-left:10px;">
+    <img src="{% static 'icons/linkedin--1372.png' %}" alt="لینکدین" style="width:30px; height:30px;">
+  </a>
+  <a href="https://www.twitter.com" target="_blank" style="margin-left:10px;">
+    <img src="{% static 'icons/images.png' %}" alt="اپارات" style="width:30px; height:30px;">
+  </a>
+</div>
+
+ 
+
+  </div>
+    <div style="width:100%; height:1px; background:#ddd; margin:30px 0;"></div>
+   <div class='text' style="text-align:center;">
+    <p>کلیه‌ی حقوق این وبسایت متعلق به شرکت دانش بنیان فن‌آوری اطلاعات امیررضا خسرویان  است.</p>
+   </div> 
+      <div style="width:100%; height:1px; background:#ddd; margin:30px 0;"></div>
+       <!-- خدمات -->
+    <div class="services">
+      <h3 style="font-size:1.1rem; font-weight:bold; margin-bottom:10px;">شهرهای دکترتو</h3>
+      <ul style="list-style:none; padding:0; margin:0;">
+        <li style="margin-bottom:6px;">
+          <a href="#" style="color:#333; text-decoration:none;">دکترتو تهران</a>
+          <a href="#" style="color:#333; text-decoration:none; margin-right:120px;">دکترتو اصفهان</a>
+          <a href="#" style="color:#333; text-decoration:none; margin-right:120px;">دکترتو شیراز</a>
+          <a href="#" style="color:#333; text-decoration:none; margin-right:120px;">دکترتو بوشهر</a>
+          <a href="#" style="color:#333; text-decoration:none; margin-right:120px;">دکترتو مشهد</a>
+        </li>
+        <li style="margin-bottom:6px;">
+          <a href="#" style="color:#333; text-decoration:none;">دکترتو بندرعباس</a>
+          <a href="#" style="color:#333; text-decoration:none; margin-right:90px;">دکترتو اهواز</a>
+          <a href="#" style="color:#333; text-decoration:none; margin-right:140px;">دکترتو کرج</a>
+          <a href="#" style="color:#333; text-decoration:none; margin-right:120px;">دکترتو کرمان</a>
+          <a href="#" style="color:#333; text-decoration:none; margin-right:130px;">دکترتو تبریز</a>
+
+           
+        </li>
+        
+      </ul>
+    </div>
+
+</footer>
+
+<script>
+  const btn = document.getElementById("read-more");
+  const text = document.getElementById("short-text");
+  let expanded = false;
+
+  btn.addEventListener("click", () => {
+    if (!expanded) {
+      text.style.webkitLineClamp = "unset";
+      btn.innerText = "کمتر";
+      expanded = true;
+    } else {
+      text.style.webkitLineClamp = "3";
+      btn.innerText = "بیشتر";
+      expanded = false;
+    }
+  });
+</script>
+
+
+<!-- JS مودال -->
+<script>
+function openAppointmentModal(doctorId) {
+    fetch("{% url 'appointment_list' %}?doctor_id=" + doctorId)
+    .then(response => response.text())
+    .then(html => {
+        document.getElementById("modal-body").innerHTML = html;
+        document.getElementById("appointmentModal").style.display = "flex";
+    });
+}
+
+function closeModal() {
+    document.getElementById("appointmentModal").style.display = "none";
+}
+
+// سوئیچ تب‌ها
+const buttons = document.querySelectorAll('.my_box button[data-tab]');
+buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+        const tab = btn.getAttribute('data-tab');
+        document.querySelectorAll('.tab-content').forEach(f => f.style.display = 'none');
+        document.getElementById(tab).style.display = 'block';
+    });
+});
+</script>
+<script>
+function loadAppointments(doctorId, date, el) {
+    // تغییر رنگ روز فعال
+    document.querySelectorAll('.day-box').forEach(d => d.classList.remove('active'));
+    el.classList.add('active');
+
+    fetch("{% url 'appointment_list' %}?doctor_id=" + doctorId + "&date=" + date)
+    .then(response => response.text())
+    .then(html => {
+        document.getElementById("modal-body").innerHTML = html;
+    });
+}
+</script>
+
+<style>
+
+   .summary{
+      background: #fbfdff;
+      border-radius:10px;
+      padding:18px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+    }
+
+    .rating-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:8px;
+    }
+    .avg-score{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+    .avg-score .score{
+      font-size:2.1rem;font-weight:800;
+    }
+    .avg-score .count{
+      color:var(--muted);
+      font-size:0.9rem;
+    }
+
+    .stars-row { display:flex; gap:6px; align-items:center; }
+    .stars-row svg{width:20px;height:20px;fill:var(--accent)}
+
+    .criteria-list{margin-top:12px}
+    .crit{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:10px 0;
+      border-bottom:1px solid #f0f2f5;
+    }
+    .crit .label{flex:1}
+    .crit .value{width:44px;text-align:left;font-weight:600}
+    .progress-wrap{flex:2.2;padding:0 12px}
+    .progress{
+      height:6px;background:var(--danger);border-radius:6px;overflow:hidden;
+      position:relative;
+    }
+    .progress > i{
+      position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,var(--accent),#f2b25a);width:0%;
+    }
+
+    .summary-stats{
+      display:flex;gap:18px;align-items:center;margin-top:14px;padding-top:10px;border-top:1px solid #f3f4f8;
+      color:var(--muted);font-size:0.95rem;
+    }
+    .summary-stats .item{flex:1; display:flex;flex-direction:column;align-items:center}
+    .summary-stats .item .big{font-weight:700;color:#2b3a50}
+
+</style>
+{% endblock content %}

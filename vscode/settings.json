@@ -1,0 +1,27 @@
+{
+  "python.languageServer": "Jedi",
+  "python.analysis.typeCheckingMode": "off",
+  "python.analysis.diagnosticMode": "openFilesOnly",
+  "python.analysis.useLibraryCodeForTypes": false,
+  "files.exclude": {
+    "**/venv": true,
+    "**/.venv": true,
+    "**/node_modules": true,
+    "**/__pycache__": true
+  },
+  "search.exclude": {
+    "**/venv": true,
+    "**/.venv": true,
+    "**/node_modules": true,
+    "**/__pycache__": true
+  },
+  "files.watcherExclude": {
+    "**/venv/**": true,
+    "**/.venv/**": true,
+    "**/node_modules/**": true
+  },
+  "git.enabled": false,
+  "extensions.autoUpdate": false,
+  "editor.formatOnSave": false,
+  "editor.codeActionsOnSave": {}
+}

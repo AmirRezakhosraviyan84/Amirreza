@@ -1,0 +1,159 @@
+{% extends '_base.html' %}
+{%load static%}
+<link href="{% static 'css/tailwind.css' %}" rel="stylesheet">
+{% block page_title %}دکتر زنان و زایمان{% endblock page_title %}
+
+{% block content %}
+
+<div class="container-fluid">
+  <div class="row">
+    <!-- نیمه سمت چپ با رنگ -->
+    <div class="col-md-6 relative" style="background-color:#A9A9A9; height:400px; width:100%;">
+      <div class="absolute inset-0 bg-blue-900 bg-opacity-60 flex flex-col items-center justify-start text-white text-center px-4" style="padding-top:110px">
+        <h1 class="text-3xl md:text-4xl font-bold">
+          نوبت‌دهی بهترین دکترهای زنان و زایمان و نازایی در سریع ترین زمان
+        </h1>
+        <p class="mt-2 text-lg">
+          نوبت‌دهی اینترنتی و مشاوره‌ آنلاین پزشکان ایران
+        </p>
+
+        <!-- باکس‌ها همینجا -->
+        <div class="box-container mt-4">
+           <div class="info-box">
+               <a href="{% url 'doctor_list'%}" style = "padding-top:100px">نوبت دهی مطب </a>
+           </div>
+           <div class="info-box">
+               
+               <a href="{% url 'online'%}" style = "padding-top:100px">مشاوره فوری پزشکی</a>
+           </div>
+           <div class="info-box">
+               <a href="{% url 'medicalcenter-list' %}"style="padding-top:100px">مشاوره تلفنی دکتر زنان</a>
+           </div>
+           <div class="info-box">
+              
+               <a href=""style="padding-top:100px">مشاوره متنی دکتر زنان</a>
+           </div>
+        </div>
+      </div>
+    </div>
+
+    
+  </div>
+
+</div>
+
+<div style="width: 100%; margin-bottom: 1.5rem; text-align: right; padding-right: 30px;">
+    <h3 style="font-size: 1.25rem; font-weight: bold;">شهرهای دکترتو</h3>
+
+    <div class="text-end mt-2">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+        <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#cityModal">
+            مشاهده همه شهرها
+        </a>
+
+        <div class="modal fade" id="cityModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">انتخاب شهر</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input id="citySearch" type="text" class="form-control mb-3" placeholder="جستجوی شهر...">
+                        <div id="cityList" class="list-group" style="max-height: 400px; overflow-y: auto;">
+                            {% for city in cities %}
+                            <a href="{% url 'city_detail' city.pk %}" class="list-group-item list-group-item-action city-item">
+                                {{ city.name }}
+                            </a>
+                            {% empty %}
+                            <div class="text-muted">شهری موجود نیست</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <script>
+document.getElementById("citySearch").addEventListener("keyup", function() {
+    var filter = this.value.toLowerCase();
+    var items = document.querySelectorAll("#cityList .city-item");
+
+    items.forEach(function(item) {
+        if (item.textContent.toLowerCase().includes(filter)) {
+            item.style.display = "";
+        } else {
+            item.style.display = "none";
+        }
+    });
+});
+</script>
+    </div>
+</div>
+
+<div class="box-container">
+    {% for city in cities %}
+    <div class="box">
+        <a href="{% url 'city_detail' city.pk %}">{{ city.name }}</a>
+        <p>---------------------------------------------------</p>
+        <div class="box-links">
+            <a href="{% url 'doctor_list' %}">نوبت دهی مطب/</a>
+            <a href="{% url 'city_detail' city.pk %}">خدمات پزشکی/</a>
+            <a href="{% url 'medicalcenter-list' %}">مراکز درمانی</a>
+        </div>
+    </div>
+    {% empty %}
+    <p>هیچ موردی پیدا نشد.</p>
+    {% endfor %}
+</div>
+  
+
+
+
+
+
+
+
+
+
+     <div class="all-city-container">
+ <div style="width: 100%; margin-bottom: 1.5rem; text-align: right; padding-right: 10px; padding-top:90px">
+  <h3 style="font-size: 1.25rem; font-weight: bold;">علائم و بیماری‌ها</h3></div>
+        <div class="swiper myCitySwiper">
+      <div class="swiper-wrapper">
+        {% for w in women %}
+        <div class="swiper-slide all-city-box">
+          <div class="city-text"><a href ="{url 'visited_detail' w.pk}">{{ w.title }}</a></div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Navigation -->
+      <div class="swiper-button-next"></div>
+      <div class="swiper-button-prev"></div>
+    </div>
+  
+
+   <div class="all-city-container">
+    <div style="width: 100%; margin-bottom: 1.5rem; text-align: right; padding-right: 10px; padding-top:90px">
+  <h3 style="font-size: 1.25rem; font-weight: bold;">دکتر ویژه زنان و زایمان و نازایی</h3></div>
+
+    <div class="swiper myCitySwiper ">
+      <div class="swiper-wrapper">
+        {% for g in gynecologists%}
+        <div class="swiper-slide all-city-box">
+            <div class="city-text"><a href ="{url 'visited_detail' g.pk}">{{ g.name }}</a></div>
+        </div>
+        {%endfor%}
+      </div>
+    </div>
+    <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev"></div>
+   </div>
+
+
+
+  
+{% endblock content %}

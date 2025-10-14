@@ -1,0 +1,401 @@
+{% extends "_base.html" %}
+{% load static %}
+
+{% block page_title %}clinic_detail{% endblock %}
+
+{% block content %}
+
+<div class="container my-4">
+  <div class="row g-3">
+
+    <!-- ستون راست: پروفایل و اطلاعات -->
+    <div class="col-lg-4" style="margin-top:80px;">
+      
+      <!-- کارت پروفایل -->
+      <div class="card shadow-sm p-3 rounded-3 mb-3">
+        <div class="d-flex align-items-center">
+          <img src="{{ doc.image.url }}" alt="{{ doc.name }}" class="rounded-circle me-3" width="80" height="80">
+          <div>
+            <h5 class="mb-1">{{ tp.name }}</h5>
+            <p class="text-muted small mb-1">{{ doc.specialty }}</p>
+            <p class="text-muted small mb-0">کد نظام پزشکی: {{ doc.medical_code }}</p>
+          </div>
+        </div>
+        <hr>
+        <div class="d-flex justify-content-between text-center">
+          <div>⭐ <span>{{ doc.rating }}</span></div>
+          <div>👍 <span>%</span><br><small class="text-muted">پیشنهاد کاربران</small></div>
+          <div>📅 <span></span><br><small class="text-muted">نوبت موفق</small></div>
+        </div>
+      </div>
+
+      <!-- درباره دکتر -->
+      <div class="card shadow-sm p-3 rounded-3 mb-3">
+        <h6 class="mb-2">درباره {{ doc.name }}</h6>
+        <p id="bio-text" class="text-muted small" style="max-height:80px; overflow:hidden;">
+          {{ doctor.bio|default:"اطلاعاتی ثبت نشده است." }}
+        </p>
+        <button id="toggle-btn" class="btn btn-link p-0 small">نمایش بیشتر</button>
+        <p style="text-align:right; font-weight:bold;">تخصص‌های {{doc.name}}:</p>
+        <div class="mb-2" style="text-align:right;">
+          <span class="badge" style="background-color: transparent; color: #0d6efd; border: 1px solid #0d6efd;">
+            {{ doc.specialty.name }}
+          </span>
+        </div>
+      </div>
+
+      <!-- آدرس مطب -->
+      <div class="card shadow-sm p-3 rounded-3 mb-3">
+        <h6 class="mb-2">آدرس مطب {{ doc.name }}</h6>
+        <p style="text-align:right; font-weight:bold;">{{ doc.address }}</p>
+      </div>
+
+      <!-- خدمات -->
+      <div class="card shadow-sm p-3 rounded-3 mb-3">
+        <h6 class="mb-2">خدمات {{ doc.name }}</h6>
+        <p>
+          {% for s in doc.service.all %}
+            {{ s.name }}{% if not forloop.last %}, {% endif %}
+          {% empty %}
+            هیچ خدمتی ثبت نشده
+          {% endfor %}
+        </p>
+      </div>
+
+      <!-- امتیاز و آمار -->
+   <div class="card shadow-sm p-3 rounded-3 mb-3">
+  <div class="card-body">
+    <div class="summary">
+      <div class="rating-top">
+        <div class="avg-score">
+          <div class="score" id="avgScore">{{ avg_rating|default:"0.0" }}</div>
+          <div class="count">{{ total_reviews|default:"0" }} کاربر</div>
+        </div>
+        <div class="stars-row" aria-hidden="true">
+          {% for i in "12345" %}
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 .587l3.668 7.431L23.6 9.75l-5.4 5.26L19.8 24 12 19.897 4.2 24l1.6-8.99L.4 9.75l7.932-1.732z"/>
+            </svg>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="criteria-list" id="criteriaList">
+        {% for crit in criteria %}
+          <div class="crit">
+            <div class="label">{{ crit.label }}</div>
+            <div class="progress-wrap">
+              <div class="progress">
+                <i style="width:{{ crit.percent }}%"></i>
+              </div>
+            </div>
+            <div class="value">{{ crit.value }}</div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="summary-stats d-flex justify-content-between mt-2">
+        <div class="text-center">
+          <div class="big">{{ recommend_percent|default:"0" }}%</div>
+          <div>پیشنهاد کاربران</div>
+        </div>
+        <div style="width:1px;background:#f0f2f7;height:42px;margin-inline:6px;border-radius:2px"></div>
+        <div class="text-center">
+          <div class="big">{{ avg_wait_label|default:"۱۵-۰ دقیقه" }}</div>
+          <div>میانگین زمان انتظار</div>
+        </div>
+      </div>
+
+      <!-- دکمه آبی امتیاز دهی -->
+      <div class="mt-3 text-center">
+        <a href="{% url 'doctor-review' doc.id %}" 
+           class="btn btn-primary" 
+           style="padding:8px 20px; font-weight:500; border-radius:8px;">
+          امتیاز دهید
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+      <!-- FAQ -->
+      <div class="faq-container mb-3">
+        <h5 style="text-align:right; font-weight:bold; margin-bottom:15px;">سوالات متداول درباره دکتر {{ doc.name }}</h5>
+        {% for faq in faqs %}
+        <div class="faq-item mb-2" style="border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.1); overflow:hidden;">
+          <div class="faq-question" style="background:#f0f0f0; padding:12px 15px; cursor:pointer; font-weight:bold; text-align:right;">
+            {{ faq.question }}
+          </div>
+          <div class="faq-answer" style="max-height:0; overflow:hidden; transition:max-height 0.4s ease, padding 0.4s ease; padding:0 15px; background:#fff; text-align:right;">
+            <p style="margin:10px 0;">{{ faq.answer }}</p>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+    </div>
+
+    <!-- ستون چپ: نوبت‌دهی و مشاوره آنلاین -->
+    <div class="col-lg-8" style="margin-top:80px;">
+
+      <!-- نوبت‌دهی -->
+      <div class="card shadow-sm p-3 mb-3 rounded-3">
+        <h6 class="mb-3" style="font-weight:bold;">نوبت‌دهی اینترنتی مطب {{ doc.name }}</h6>
+        <div class="border p-3 rounded-3">
+          <p class="text-muted small mb-1">آدرس:<br>{{ doc.address }}</p>
+          {% if doctor.available_appointments %}
+            <!-- نمایش نوبت‌ها -->
+          {% else %}
+            <span class="badge bg-warning text-dark">فعلاً نوبتی تعریف نشده</span>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- مشاوره آنلاین -->
+      <div class="card shadow-sm p-3 mb-3 rounded-3">
+        <h6 class="mb-3">مشاوره پزشکی آنلاین {{ doc.name }}</h6>
+        <div class="border p-3 rounded-3 mb-2">
+          <div class="d-flex justify-content-between align-items-center">
+            <span>📞 نوبت مشاوره تلفنی</span>
+          </div>
+          <hr>
+          <div class="d-flex justify-content-between mt-2" style="text-align:right; font-size:14px;">
+            <div>
+              <span class="text-muted small">
+                {% if first_available %}
+                  اولین نوبت آزاد: {{ first_available.date }} ساعت {{ first_available.time }}
+                {% else %}
+                  اولین نوبت: فعلاً ثبت نشده
+                {% endif %}
+              </span>
+              <div class="mt-2">
+                <span style="display:inline-block; padding:6px 12px; border:1px solid #0d6efd; border-radius:8px; color:#0d6efd; background-color:transparent;">
+                  ۵۰۰,۰۰۰ تومان
+                </span>
+                <a href="javascript:void(0);" onclick="openDoctorModal({{ doctor_id }})" style="color:#0d6efd; text-decoration:underline; display:block; margin-top:5px;">
+                  مشاوره تلفنی بگیرید
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="border p-3 rounded-3" style="text-align:right;">
+          <span style="display:block; font-weight:600;">💬 مشاوره متنی</span>
+          <hr style="margin:8px 0;">
+          <p>امکان ارسال پیام متنی و صوتی</p>
+          <p>امکان ارسال فایل</p>
+          <p>پاسخگویی پزشک در کمتر از ۲۴ ساعت</p>
+          <span style="display:inline-block; padding:6px 12px; border:1px solid #0d6efd; border-radius:8px; color:#0d6efd; background-color:transparent;">
+            ۵۰۰,۰۰۰ تومان
+          </span>
+          <a href="{% url 'text_list' %}" style="color:#0d6efd; text-decoration:underline; display:block; margin-top:5px;">
+            مشاوره متنی بگیرید
+          </a>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+
+<footer style="width:100%; background:#fff; border-top:1px solid #ddd; padding:30px 20px; direction:rtl; box-sizing:border-box;">
+
+  <!-- بخش بالا فوتر -->
+  <div class="top-footer" style="
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));
+    gap:30px;
+    width:100%;
+    box-sizing:border-box;
+  ">
+    <!-- خدمات -->
+    <div class="services">
+      <h3 style="font-size:1.1rem; font-weight:bold; margin-bottom:10px;">خدمات دکتروتو</h3>
+      <ul style="list-style:none; padding:0; margin:0;">
+        <li style="margin-bottom:6px;">
+          <a href="#" style="color:#333; text-decoration:none;">نوبت دهی مطب</a>
+          <a href="#" style="color:#333; text-decoration:none; margin-right:70px;">دکترتو کلینیک</a>
+        </li>
+        <li style="margin-bottom:6px;">
+          <a href="#" style="color:#333; text-decoration:none;">مشاوره تلفنی</a>
+          <a href="#" style="color:#333; text-decoration:none; margin-right:90px;">مراکز درمانی</a>
+        </li>
+        <li style="margin-bottom:6px;">
+          <a href="#" style="color:#333; text-decoration:none;">مشاوره متنی</a>
+          <a href="#" style="color:#333; text-decoration:none; margin-right:90px;">مجله سلامت</a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- صفحات -->
+    <div class="pages" style="text-align:right;">
+      <h3 style="font-size:1.1rem; font-weight:bold; margin-bottom:10px;">صفحات دکتروتو</h3>
+      <ul style="list-style:none; padding:0; margin:0;">
+        <li style="margin-bottom:6px;">
+          <a href="#" style="color:#333; text-decoration:none;">درباره ما</a>
+          <a href="#" style="color:#333; text-decoration:none; margin-right:60px;">قوانین و مقررات</a>
+        </li>
+        <li style="margin-bottom:6px;">
+          <a href="#" style="color:#333; text-decoration:none;">سوالات متداول</a>
+          <a href="#" style="color:#333; text-decoration:none; margin-right:20px;">قوانین ثبت نظر</a>
+        </li>
+        <li style="margin-bottom:6px;">
+          <a href="#" style="color:#333; text-decoration:none;">ثبت نام پزشکان</a>
+          <a href="#" style="color:#333; text-decoration:none; margin-right:20px;">تماس با ما</a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- در کنار شما -->
+    <div class="pages" style="text-align:right;">
+      <h3 style="font-size:1.1rem; font-weight:bold; margin-bottom:10px;">در کنار شما</h3>
+      <ul style="list-style:none; padding:0; margin:0;">
+        <li style="margin-bottom:6px;"><a href="#" style="color:#333; text-decoration:none;">تخصص های پزشکی</a></li>
+        <li style="margin-bottom:6px;"><a href="#" style="color:#333; text-decoration:none;">موقعیت های شغلی</a></li>
+      </ul>
+    </div>
+
+    <!-- اپلیکیشن -->
+    <div class="pages" style="text-align:left;">
+      <h2 style="font-size:1.1rem; font-weight:bold; margin-bottom:10px;">اپلیکیشن دکترتو را دریافت کنید</h2>
+      <div class="app-buttons" style="margin-top:10px; display:flex; flex-direction:column; gap:10px; align-items:flex-start;">
+        <a href="https://cafebazaar.ir/app/ir.hivatec.doctoreto" target="_blank" 
+           style="padding:14px 0; font-size:1rem; color:#4CAF50; text-decoration:none; border:2px solid #4CAF50; border-radius:8px; background-color:transparent; text-align:center; min-width:200px; display:block; transition:0.3s;">
+            دانلود از کافه بازار
+        </a>
+        <a href="https://doctoreto.com/direct_download/doctoreto-4.7.3.apk" target="_blank" 
+           style="padding:14px 0; font-size:1rem; color:#0070C9; text-decoration:none; border:2px solid #0070C9; border-radius:8px; background-color:transparent; text-align:center; min-width:200px; display:block; transition:0.3s;">
+           دانلود مستقیم نسخه اندروید 
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- خط جداکننده -->
+  <div style="width:100%; height:1px; background:#ddd; margin:30px 0;"></div>
+
+  <!-- بخش پایین فوتر -->
+  <div class="bottom-footer" style="display:flex; flex-wrap:wrap; justify-content:space-between; gap:20px; width:100%; box-sizing:border-box;">
+
+    <!-- بلوک توضیح + لوگو + دکمه بیشتر + تصاویر -->
+    <div class="description" style="text-align:right; max-width:400px;">
+      <img src="{% static 'icons/doctoreto-logo.png' %}" alt="لوگو" style="height:50px; margin-bottom:10px;">
+      <p id="short-text" style="
+          color:#555; 
+          font-size:0.9rem; 
+          line-height:1.4;
+          display:-webkit-box;
+          -webkit-line-clamp:3;
+          -webkit-box-orient:vertical;
+          overflow:hidden;
+          text-overflow:ellipsis;
+      ">
+        دکترتو ساده‌ترین راه نوبت‌ دهی اینترنتی و مشاوره آنلاین پزشکان ایران است...
+      </p>
+      <button id="read-more" style="background:none; border:none; color:#0070C9; cursor:pointer; font-size:0.9rem; padding:0; margin-top:5px;">بیشتر</button>
+
+      <div class="icons-row" style="display:flex; gap:15px; margin-top:15px; flex-wrap:wrap; justify-content:flex-start;">
+        <img src="{% static 'images/enamad.png' %}" alt="نماد 1" style="height:50px;">
+        <img src="{% static 'images/samandehi.png' %}" alt="نماد 2" style="height:50px;">
+        <img src="{% static 'images/etehadie-logo.png' %}" alt="نماد 3" style="height:50px;">
+        <img src="{% static 'images/saman-kish-logo.png' %}" alt="نماد 4" style="height:50px;">
+        <img src="{% static 'images/mellat.png' %}" alt="نماد 5" style="height:50px;">
+      </div>
+    </div>
+     <div class="social" style="text-align:right;">
+  <h4 style="margin-bottom:10px;">با ما در ارتباط باشید</h4>
+   <p>ایمیل:</p>
+  <!-- ایمیل با آیکون -->
+  <div style="display:flex; align-items:center; gap:8px;">
+    <img src="{% static 'icons/email.png' %}" alt="ایمیل" style="height:24px;">
+    <a href="mailto:info@doctoreto.com" style="color:#0070C9; text-decoration:none;">info@doctoreto.com</a>
+  </div>
+</div>
+<div class="social" style="text-align:right;">
+  <h4 style="margin-bottom:10px;">شبکه های اجتماعی</h4>
+  <!-- آیکون‌ها با تصویر -->
+  <a href="https://www.instagram.com" target="_blank" style="margin-left:10px;">
+    <img src="{% static 'icons/instagram--1364.png' %}" alt="اینستاگرام" style="width:30px; height:30px;">
+  </a>
+  <a href="https://www.telegram.org" target="_blank" style="margin-left:10px;">
+    <img src="{% static 'icons/telegram--1410.png' %}" alt="تلگرام" style="width:30px; height:30px;">
+  </a>
+  <a href="https://www.linkedin.com" target="_blank" style="margin-left:10px;">
+    <img src="{% static 'icons/linkedin--1372.png' %}" alt="لینکدین" style="width:30px; height:30px;">
+  </a>
+  <a href="https://www.twitter.com" target="_blank" style="margin-left:10px;">
+    <img src="{% static 'icons/images.png' %}" alt="اپارات" style="width:30px; height:30px;">
+  </a>
+</div>
+
+ 
+
+  </div>
+    <div style="width:100%; height:1px; background:#ddd; margin:30px 0;"></div>
+   <div class='text' style="text-align:center;">
+    <p>کلیه‌ی حقوق این وبسایت متعلق به شرکت دانش بنیان فن‌آوری اطلاعات امیررضا خسرویان  است.</p>
+   </div> 
+      <div style="width:100%; height:1px; background:#ddd; margin:30px 0;"></div>
+       <!-- خدمات -->
+    <div class="services">
+      <h3 style="font-size:1.1rem; font-weight:bold; margin-bottom:10px;">شهرهای دکترتو</h3>
+      <ul style="list-style:none; padding:0; margin:0;">
+        <li style="margin-bottom:6px;">
+          <a href="#" style="color:#333; text-decoration:none;">دکترتو تهران</a>
+          <a href="#" style="color:#333; text-decoration:none; margin-right:120px;">دکترتو اصفهان</a>
+          <a href="#" style="color:#333; text-decoration:none; margin-right:120px;">دکترتو شیراز</a>
+          <a href="#" style="color:#333; text-decoration:none; margin-right:120px;">دکترتو بوشهر</a>
+          <a href="#" style="color:#333; text-decoration:none; margin-right:120px;">دکترتو مشهد</a>
+        </li>
+        <li style="margin-bottom:6px;">
+          <a href="#" style="color:#333; text-decoration:none;">دکترتو بندرعباس</a>
+          <a href="#" style="color:#333; text-decoration:none; margin-right:90px;">دکترتو اهواز</a>
+          <a href="#" style="color:#333; text-decoration:none; margin-right:140px;">دکترتو کرج</a>
+          <a href="#" style="color:#333; text-decoration:none; margin-right:120px;">دکترتو کرمان</a>
+          <a href="#" style="color:#333; text-decoration:none; margin-right:130px;">دکترتو تبریز</a>
+
+           
+        </li>
+        
+      </ul>
+    </div>
+
+</footer>
+<!-- اسکریپت FAQ و bio -->
+<script>
+document.querySelectorAll('.faq-question').forEach(question => {
+  question.addEventListener('click', () => {
+    const answer = question.nextElementSibling;
+    if(answer.style.maxHeight && answer.style.maxHeight !== "0px"){
+      answer.style.maxHeight = "0px";
+      answer.style.paddingTop = "0";
+      answer.style.paddingBottom = "0";
+    } else {
+      answer.style.maxHeight = answer.scrollHeight + "px";
+      answer.style.paddingTop = "10px";
+      answer.style.paddingBottom = "10px";
+    }
+  });
+});
+
+const bioText = document.getElementById("bio-text");
+const toggleBtn = document.getElementById("toggle-btn");
+let expanded = false;
+toggleBtn.addEventListener("click", function() {
+  expanded = !expanded;
+  if (expanded) {
+    bioText.style.maxHeight = "none";
+    toggleBtn.innerText = "نمایش کمتر";
+  } else {
+    bioText.style.maxHeight = "80px";
+    toggleBtn.innerText = "نمایش بیشتر";
+  }
+});
+</script>
+
+{% endblock %}

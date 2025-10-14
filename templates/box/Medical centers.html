@@ -1,0 +1,197 @@
+{% extends '_base.html'%}
+{% load static %}
+
+{% block page_title %}لیست تمام مراکز درمانی {% endblock page_title %}
+
+{% block content %}
+<div class="hero-section2">
+  <div class="hero-content">
+    <h1>نوبت‌دهی مراکز درمانی</h1>
+    <p>مراکز درمانی یا تخصص مورد نظر خود را به راحتی جستجو کنید</p>
+       <br>
+ <form method="GET" action="{% url 'search' %}" class="search-container">
+  
+  <select class="city-select" name="city">
+    <option value="" disabled selected>جستجوی شهرها</option>
+    {% for c in cities %}
+      <option value="{{ c.pk }}">{{ c.name }}</option>
+    {% endfor %}
+  </select>
+
+  <input type="text"
+         class="search-input"
+         name="q"
+         placeholder="جستجوی دکتر، تخصص، بیماری یا مرکز درمانی...">
+
+  <button type="submit" class="search-btn">🔍</button>
+
+</form>
+
+    </div>
+  </div>
+</div>
+    <!-- card -->
+        
+      <div class="box-container">
+          {% for m in center_types%}
+          <div class="info-box">
+              <img src="{{m.image.url}}" alt="{{m.title}}">
+              <a href="{% url 'type_detail' m.pk %}">{{m.title}}</a>
+          </div>    
+          {% empty %}
+          <p>باکسی وجود ندارد</p> 
+          {% endfor%} 
+      </div>
+
+          
+  <div style="width: 100%; margin-bottom: 1.5rem; text-align: right; padding-right: 50px;">
+    <h3 style="font-size: 1.25rem; font-weight: bold;">شهر های دارای مراکز درمانی دکترتو</h3></div>
+
+<!-- باکس شهرها با گرید ۴تایی -->
+    <div class="text-end mt-2">
+    <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#cityModal">
+        مشاهده همه شهرها
+    </a>
+
+       <div class="modal fade" id="cityModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header" style =" padding-right: 50px;">
+                        <h5 class="modal-title">انتخاب شهر</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input id="citySearch" type="text" class="form-control mb-3" placeholder="جستجوی شهر...">
+                        <div id="cityList" class="list-group" style="max-height: 400px; overflow-y: auto;">
+                            {% for c in cities %}
+                            <a href="{% url 'city_detail' c.pk %}" class="list-group-item list-group-item-action city-item">
+                                {{ c.name }}
+                            </a>
+                            {% empty %}
+                            <div class="text-muted">شهری موجود نیست</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <script>
+document.getElementById("citySearch").addEventListener("keyup", function() {
+    var filter = this.value.toLowerCase();
+    var items = document.querySelectorAll("#cityList .city-item");
+
+    items.forEach(function(item) {
+        if (item.textContent.toLowerCase().includes(filter)) {
+            item.style.display = "";
+        } else {
+            item.style.display = "none";
+        }
+    });
+});
+</script>
+    </div>
+</div>
+
+<div class="box-container">
+    {% for c in cities %}
+    <div class="box">
+        <a href="{% url 'labratory_detail' c.pk %}">{{ c.name }}</a>
+        <p>---------------------------------------------------</p>
+        <div class="box-links">
+           
+        </div>
+    </div>
+    {% empty %}
+    <p>هیچ موردی پیدا نشد.</p>
+    {% endfor %}
+</div>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css"
+/>
+        <div style="width: 100%; margin-bottom: 1.5rem; text-align: right; padding-right: 50px;">
+    <h3 style="font-size: 1.25rem; font-weight: bold;">تخصص های مراکز درمانی دکترتو</h3>
+    <div class="swiper mySwiper">
+        <div class="swiper-wrapper">
+            {% for sp in specialities %}
+            <div class="swiper-slide">
+                <div class="info-box">
+                    <img src="{{ sp.image.url }}" alt="{{ d.title }}">
+                    <a href="{% url 'visited_detail' sp.pk %}">{{ sp.title }}</a>
+                </div>
+            </div>
+            {% empty %}
+            <p>باکسی وجود ندارد</p> 
+            {% endfor %} 
+        </div>
+      <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
+    </div>
+      
+  </div>
+</div>
+       <div style="width: 100%; margin-bottom: 1.5rem; text-align: right; padding-right: 50px;">
+    <h3 style="font-size: 1.25rem; font-weight: bold;">مراکز تشخیص و درمان علائم و بیماری‌ها</h3>
+
+    <div class="box-container">
+        {% for c in centers %}
+        <div class="labs-box">
+          <br>
+          <br>
+            <h6>آزمایشگاه</h6>
+            <a href="{% url 'medical_center_detail' c.pk %}">{{ c.title }}</a> 
+        </div>
+        {% endfor %}
+    </div>
+</div>
+</div>
+     <div style="width: 100%; margin-bottom: 1.5rem; text-align: right; padding-right: 50px;">
+    <h3 style="font-size: 1.25rem; font-weight: bold;">جدیدترین مراکز درمانی</h3>
+
+     <!-- لینک CSS و JS Swiper -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css"/>
+<script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+
+
+
+<div class="swiper mySwiper">
+  <div class="swiper-wrapper">
+    {% for s in the_lasts %}
+      <div class="swiper-slide">
+        <div class="info-box">
+          <img src="{{ s.image.url }}" alt="{{ s.title }}">
+          <a href="{% url 'latest_center_detail' s.pk%}">{{ s.title }}</a>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+  
+  <!-- دکمه‌های حرکت -->
+  <div class="swiper-button-next"></div>
+  <div class="swiper-button-prev"></div>
+</div>
+</div>
+<script>
+  const swiper = new Swiper(".mySwiper", {
+    slidesPerView: 5,       // هر بار ۵ باکس دیده شود
+    spaceBetween: 5,        // فاصله بین باکس‌ها
+    navigation: {
+      nextEl: ".swiper-button-next",
+      prevEl: ".swiper-button-prev",
+    },
+    loop: false,
+    breakpoints: {           // ریسپانسیو
+      1200: { slidesPerView: 5 },
+      992: { slidesPerView: 4 },
+      768: { slidesPerView: 3 },
+      576: { slidesPerView: 2 },
+      0: { slidesPerView: 1 },
+    }
+  });
+</script>
+
+
+
+
+{% endblock content %}

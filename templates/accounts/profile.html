@@ -1,0 +1,197 @@
+{% extends "_base.html" %}
+{% load static %}
+{% block page_title %}پروفایل - دکترتو{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+
+<div class="profile-container">
+    <div class="profile-card" style="padding-top:50px;">
+
+        <!-- Sidebar -->
+        <div class="profile-sidebar">
+            <div class="profile-avatar">
+                <div class="avatar-circle">👤</div>
+                <h4>{{ user.first_name }} {{ user.last_name }}</h4>
+                <p>{{ user.phone_number }}</p>
+            </div>
+            <ul class="profile-menu">
+    <li class="active" data-tab="profile-info">اطلاعات کاربری</li>
+    <li data-tab="my-appointments">نوبت‌های من</li>
+    <li data-tab="my-orders">سفارش‌های من</li>
+    <li data-tab="my-tests">آزمایش‌های من</li>
+    <li data-tab="chat">صفحه گفتگو</li>
+    <li data-tab="wallet">کیف پول</li>
+    <li data-tab="transactions">تراکنش‌های من</li>
+    <li data-tab="experiences">تجربه‌های من</li>
+    <li data-tab="my-list">لیست من</li>
+    <li class="logout"><a href="{% url 'Logout' %}">خروج</a></li>
+</ul>
+        </div>
+
+        <!-- محتوای تب‌ها -->
+        <div class="profile-content" style="flex:1; padding:20px;">
+
+            <!-- تب اطلاعات کاربری -->
+            <div id="profile-info" class="tab-content">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.non_field_errors }}
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>{{ form.first_name.label }}*</label>
+                            {{ form.first_name }}
+                        </div>
+                        <div class="form-group">
+                            <label>{{ form.last_name.label }}*</label>
+                            {{ form.last_name }}
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>{{ form.national_code.label }}</label>
+                            {{ form.national_code }}
+
+                            <div style="margin-top:8px;">
+                                <input type="checkbox" id="is_foreign" name="is_foreign" {% if user.is_foreign %}checked{% endif %}>
+                                <label for="is_foreign">اتباع خارجی هستم و کدملی ندارم</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>شماره موبایل</label>
+                            <input type="text" value="{{ user.phone_number }}" disabled>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>{{ form.birth_year.label }}*</label>
+                            {{ form.birth_year }}
+                        </div>
+                        <div class="form-group">
+                            <label>{{ form.gender.label }}*</label>
+                            {{ form.gender }}
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>{{ form.city.label }}*</label>
+                            {{ form.city }}
+                        </div>
+                        <div class="form-group">
+                            <label>{{ form.email.label }}</label>
+                            {{ form.email }}
+                        </div>
+                    </div>
+
+                    <button type="submit" class="submit-btn">ذخیره تغییرات</button>
+                </form>
+            </div>
+
+            <!-- تب نوبت‌ها -->
+            <div id="my-appointments" class="tab-content" style="display:none;">
+                <p>اینجا لیست نوبت‌ها نمایش داده خواهد شد.</p>
+            </div>
+
+            <!-- تب سفارش‌ها -->
+            <div id="my-orders" class="tab-content" style="display:none;">
+                <p>اینجا لیست سفارش‌ها نمایش داده خواهد شد.</p>
+            </div>
+
+            <!-- تب آزمایش‌ها -->
+            <div id="my-tests" class="tab-content" style="display:none;">
+                <p>اینجا لیست آزمایش‌ها نمایش داده خواهد شد.</p>
+            </div>
+
+            <!-- تب صفحه گفتگو -->
+            <div id="chat" class="tab-content" style="display:none;">
+                <p>اینجا صفحه گفتگو نمایش داده خواهد شد.</p>
+            </div>
+
+            <!-- تب کیف پول -->
+          <div id="wallet" class="tab-content" style="display:none;">
+<div id="wallet" class="tab-content" style="display:none;">
+    <h3>موجودی کیف پول: {{ formatted_balance }} تومان</h3>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="wallet-amount">مبلغ شارژ:</label>
+            <input type="text" id="wallet-amount" name="amount" value="{{ wallet_form.amount.value|default_if_none:'' }}">
+        </div>
+        <button type="submit" class="submit-btn">شارژ کیف پول</button>
+    </form>
+</div>
+
+            <!-- تب تراکنش‌ها -->
+            <div id="transactions" class="tab-content" style="display:none;">
+                <p>اینجا لیست تراکنش‌ها نمایش داده خواهد شد.</p>
+            </div>
+
+            <!-- تب تجربه‌ها -->
+            <div id="experiences" class="tab-content" style="display:none;">
+                <p>اینجا تجربه‌های کاربر نمایش داده خواهد شد.</p>
+            </div>
+
+            <!-- تب لیست من -->
+            <div id="my-list" class="tab-content" style="display:none;">
+                <p>اینجا لیست‌های کاربر نمایش داده خواهد شد.</p>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+<!-- JS برای تب‌بندی و اتباع -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // اتباع خارجی و کد ملی
+    const foreignCheckbox = document.getElementById('is_foreign');
+    const nationalCodeInput = document.getElementById('id_national_code');
+
+    function toggleNationalCode() {
+        if(foreignCheckbox.checked) {
+            nationalCodeInput.disabled = true;
+            nationalCodeInput.value = '';
+        } else {
+            nationalCodeInput.disabled = false;
+        }
+    }
+
+    toggleNationalCode();
+    foreignCheckbox.addEventListener('change', toggleNationalCode);
+
+    // تب‌بندی
+    const tabs = document.querySelectorAll('.profile-menu li[data-tab]');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+
+            const target = tab.dataset.tab;
+            tabContents.forEach(tc => {
+                tc.style.display = (tc.id === target) ? 'block' : 'none';
+            });
+        });
+    });
+});
+</script>
+<script>
+const walletInput = document.getElementById('wallet-amount');
+
+walletInput.addEventListener('input', function(e) {
+    let value = this.value.replace(/,/g, ''); // حذف کاماهای قبلی
+    if(!isNaN(value) && value !== '') {
+        this.value = Number(value).toLocaleString('en-US'); // اضافه کردن کاما
+    }
+});
+</script>
+
+
+{% endblock content %}

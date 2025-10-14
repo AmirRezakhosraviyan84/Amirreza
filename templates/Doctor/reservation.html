@@ -1,0 +1,36 @@
+<!-- templates/appointments/slots.html -->
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <title>رزرو نوبت</title>
+    <style>
+    </style>
+</head>
+<body>
+
+<h2 style="text-align: center;">نوبت‌های موجود</h2>
+
+<div class="calendar">
+    {% for day, slots in calendar_data.items %}
+    <div class="day-column">
+        <div class="day-header">{{ day }}</div>
+        {% for slot in slots %}
+            <div class="slot {% if slot.is_booked %}booked{% else %}available{% endif %}">
+                {{ slot.start_time }} - {{ slot.end_time }}
+                {% if not slot.is_booked %}
+                    <form method="post" action="{% url 'book_appointment' slot.id %}">
+                        {% csrf_token %}
+                        <button type="submit">رزرو</button>
+                    </form>
+                {% else %}
+                    <div>رزرو شده</div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+</div>
+
+</body>
+</html>

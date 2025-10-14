@@ -1,0 +1,171 @@
+{%extends "_base.html"%}
+{% block page_title %}book_appointment{% endblock page_title %}
+{% block content %}
+
+<form method="post" action="{% url 'appointment_detail' appointment.id %}">
+  {% csrf_token %}
+
+  <div class="formbold-mb-5 first-field">
+    <label for="first_name" class="formbold-form-label">نام</label>
+    <input type="text" name="first_name" id="first_name" 
+           value="{{ form.first_name.value }}" 
+           class="formbold-form-input"/>
+    {% if form.first_name.errors %}
+      <p class="text-red-500 text-sm">{{ form.first_name.errors.0 }}</p>
+    {% endif %}
+  </div>
+
+  <div class="formbold-mb-5">
+    <label for="last_name" class="formbold-form-label">نام خانوادگی</label>
+    <input type="text" name="last_name" id="last_name" 
+           value="{{ form.last_name.value }}" 
+           class="formbold-form-input"/>
+    {% if form.last_name.errors %}
+      <p class="text-red-500 text-sm">{{ form.last_name.errors.0 }}</p>
+    {% endif %}
+  </div>
+
+  <div class="formbold-mb-5">
+    <label for="phone" class="formbold-form-label">شماره تماس</label>
+    <input type="text" name="phone" id="phone" 
+           value="{{ form.phone.value }}" 
+           class="formbold-form-input"/>
+    {% if form.phone.errors %}
+      <p class="text-red-500 text-sm">{{ form.phone.errors.0 }}</p>
+    {% endif %}
+  </div>
+
+  <div class="formbold-mb-5">
+    <label for="email" class="formbold-form-label">کدملی</label>
+    <input type="email" name="email" id="email" 
+           value="{{ form.email.value }}" 
+           class="formbold-form-input"/>
+    {% if form.email.errors %}
+      <p class="text-red-500 text-sm">{{ form.email.errors.0 }}</p>
+    {% endif %}
+  </div>
+
+  <!-- تاریخ و زمان -->
+  <div class="flex flex-wrap formbold--mx-3">
+    <div class="w-full sm:w-half formbold-px-3">
+      <div class="formbold-mb-5 w-full">
+        <label for="date" class="formbold-form-label">سال تولد</label>
+        <input type="date" name="date" id="date" 
+               value="{{ form.date.value }}" 
+               class="formbold-form-input"/>
+        {% if form.date.errors %}
+          <p class="text-red-500 text-sm">{{ form.date.errors.0 }}</p>
+        {% endif %}
+      </div>
+    </div>
+   
+  </div>
+
+  <!-- دکمه ارسال -->
+  <div>
+    <button type="submit" class="formbold-btn">رزرو نوبت</button>
+  </div>
+</form>
+<style>
+  .first-field {
+  margin-top: 70px;  /* فاصله از بالای فرم */
+}
+.formbold-form-input {
+  width: 100%;
+  padding: 8px 16px;       /* جمع و جورتر کردن باکس */
+  font-size: 14px;
+  border-radius: 5px;
+}
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  body {
+    font-family: "Inter", Arial, Helvetica, sans-serif;
+  }
+  .formbold-mb-5 {
+    margin-bottom: 20px;
+   
+  }
+  .formbold-pt-3 {
+    padding-top: 12px;
+  }
+.formbold-main-wrapper {
+  display: flex;
+  justify-content: center; /* افقی وسط */
+  align-items: flex-start; /* از بالا شروع شود */
+  min-height: 100vh;       /* حداقل ارتفاع صفحه */
+  padding-top: 60px;       /* فاصله از بالا برای کل فرم */
+}
+
+ .formbold-form-wrapper {
+  max-width: 450px;       /* اندازه کوچکتر فرم */
+  width: 100%;
+  background: white;
+  padding: 20px;          /* فاصله داخلی جمع و جور */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  border-radius: 12px;
+}
+
+  .formbold-form-label {
+    display: block;
+    font-weight: 500;
+    font-size: 16px;
+    color: #07074d;
+    margin-bottom: 12px;
+  }
+  .formbold-form-label-2 {
+    font-weight: 600;
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+
+ 
+  .formbold-form-input:focus {
+    border-color: #6a64f1;
+    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.05);
+  }
+
+  .formbold-btn {
+    text-align: center;
+    font-size: 16px;
+    border-radius: 6px;
+    padding: 14px 32px;
+    border: none;
+    font-weight: 600;
+    background-color: #6a64f1;
+    color: white;
+    width: 100%;
+    cursor: pointer;
+  }
+  .formbold-btn:hover {
+    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.05);
+  }
+
+  .formbold--mx-3 {
+    margin-left: -12px;
+    margin-right: -12px;
+  }
+  .formbold-px-3 {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+  .flex {
+    display: flex;
+  }
+  .flex-wrap {
+    flex-wrap: wrap;
+  }
+  .w-full {
+    width: 100%;
+  }
+  @media (min-width: 540px) {
+    .sm\:w-half {
+      width: 50%;
+    }
+  }
+</style>
+
+{% endblock content %}

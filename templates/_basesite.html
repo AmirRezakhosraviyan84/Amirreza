@@ -1,0 +1,88 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Dashboard | TailAdmin{% endblock %}</title>
+
+    <!-- TailAdmin CSS -->
+    <link rel="stylesheet" href="{% static 'tailadmin/src   /css/style.css' %}">
+    <script>
+    const IMAGES = {
+        logo: "{% static 'tailadmin/src/images/logo/auth-logo.svg' %}",
+        sidebarBg: "{% static 'tailadmin/src/images/sidebar/sidebar-bg.jpg' %}",
+        userAvatar: "{% static 'tailadmin/src/images/avatar/user.png' %}",
+        // بقیه تصاویر...
+    };
+</script>
+
+
+    <!-- Alpine.js -->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <!-- TailAdmin JS -->
+    <script src="{% static 'tailadmin/js/index.js' %}"></script>
+</head>
+<body
+    x-data="{ page: 'ecommerce', loaded: true, darkMode: false, stickyMenu: false, sidebarToggle: false, scrollTop: false }"
+    x-init="
+        darkMode = JSON.parse(localStorage.getItem('darkMode'));
+        $watch('darkMode', value => localStorage.setItem('darkMode', JSON.stringify(value)))
+    "
+    :class="{'dark bg-gray-900': darkMode === true}"
+>
+    <!-- Preloader -->
+    {% include 'partials/preloader.html' %}
+
+    <!-- Page Wrapper -->
+    <div class="flex h-screen overflow-hidden">
+
+        <!-- Sidebar -->
+        {% include 'partials/sidebar.html' %}
+
+        <!-- Content Area -->
+        <div class="relative flex flex-col flex-1 overflow-x-hidden overflow-y-auto">
+
+            <!-- Small Device Overlay -->
+            {% include 'partials/overlay.html' %}
+
+            <!-- Header -->
+            {% include 'partials/header.html' %}
+
+            <!-- Main Content -->
+            <main>
+                <div class="p-4 mx-auto max-w-7xl md:p-6">
+                    <div class="grid grid-cols-12 gap-4 md:gap-6">
+
+                        <!-- Left Column -->
+                        <div class="col-span-12 space-y-6 xl:col-span-7">
+                            {% block content_left %}
+                            {% include 'partials/metric-group/metric-group-01.html' %}
+                            {% include 'partials/chart/chart-01.html' %}
+                            {% endblock %}
+                        </div>
+
+                        <!-- Right Column -->
+                        <div class="col-span-12 xl:col-span-5">
+                            {% block content_right %}
+                            {% include 'partials/chart/chart-02.html' %}
+                            {% endblock %}
+                        </div>
+
+                        <!-- Full-width Section -->
+                        <div class="col-span-12">
+                            {% block content_full %}
+                            {% include 'partials/chart/chart-03.html' %}
+                            {% include 'partials/table/table-01.html' %}
+                            {% endblock %}
+                        </div>
+
+                    </div>
+                </div>
+            </main>
+
+        </div>
+    </div>
+</body>
+</html>

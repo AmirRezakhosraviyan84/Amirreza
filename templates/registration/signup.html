@@ -1,0 +1,61 @@
+{% extends "_base.html" %}
+{% block page_title %}ثبت نام{% endblock %}
+
+{% block content %}
+<div class="signup-container">
+    <div class="signup-card">
+        <h2 class="text-center mb-4">ثبت نام کاربران</h2>
+
+        <form method="POST" class="signup-form" autocomplete="off">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+
+            <!-- نام کاربری -->
+            <div class="form-group mb-3">
+                <label>نام کاربری:</label>
+                {{ form.username }}
+            </div>
+
+            <!-- شماره موبایل -->
+            <div class="form-group mb-3">
+                <label>شماره موبایل:</label>
+                {{ form.phone_number }}
+            </div>
+
+            <!-- پسورد -->
+            <div class="form-group mb-3">
+                <label>رمز عبور:</label>
+                {{ form.password1 }}
+            </div>
+
+            <!-- تکرار پسورد -->
+            <div class="form-group mb-3">
+                <label>تکرار رمز عبور:</label>
+                {{ form.password2 }}
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 mt-2">ثبت نام</button>
+
+            <div class="text-center mt-3">
+                <a href="{% url 'login' %}">قبلاً ثبت نام کرده‌اید؟ ورود</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+.signup-container {
+    display:flex; justify-content:center; align-items:center; min-height:80vh; background:#f5f7fb; padding:20px;
+}
+.signup-card {
+    background:#fff; padding:30px 25px; border-radius:15px; box-shadow:0 10px 25px rgba(0,0,0,0.1);
+    max-width:400px; width:100%; margin-top:60px;
+}
+.signup-card h2 { font-weight:600; color:#333; }
+.form-group label { font-weight:500; margin-bottom:5px; display:block; color:#555; }
+.form-control { width:100%; padding:10px 12px; font-size:16px; border-radius:8px; border:1px solid #ccc; transition:0.2s; }
+.form-control:focus { border-color:#007bff; box-shadow:0 0 5px rgba(0,123,255,0.3); outline:none; }
+.btn-primary { padding:10px 0; font-size:18px; border-radius:10px; transition:0.3s; }
+.btn-primary:hover { background:#0069d9; }
+</style>
+{% endblock %}

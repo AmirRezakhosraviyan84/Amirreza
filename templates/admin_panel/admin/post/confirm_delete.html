@@ -1,0 +1,47 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>حذف {{ object }}</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Alpine.js برای دارک مود -->
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/@alpinejs/persist@3.x.x/dist/cdn.min.js" defer></script>
+
+</head>
+<body 
+  x-data="{ darkMode: JSON.parse(localStorage.getItem('darkMode') || 'false') }"
+  x-init="$watch('darkMode', value => localStorage.setItem('darkMode', JSON.stringify(value)))"
+  :class="{'dark bg-gray-900 text-gray-100': darkMode, 'bg-gray-100 text-gray-900': !darkMode}"
+  class="min-h-screen flex items-center justify-center"
+>
+
+<div class="container p-4 max-w-md w-full">
+    <h1 class="text-xl font-bold mb-4 text-gray-800 dark:text-gray-200">
+        آیا مطمئن هستید که می‌خواهید این {{ object }} را حذف کنید؟
+    </h1>
+    
+    <form method="POST" class="flex gap-2">
+        {% csrf_token %}
+        <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded">حذف</button>
+        <a href="{% url 'post-list' %}" class="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded">لغو</a>
+    </form>
+</div>
+
+<!-- دکمه تغییر دارک مود -->
+<div class="fixed bottom-4 left-4">
+  <button 
+    @click="darkMode = !darkMode"
+    class="px-4 py-2 rounded bg-gray-700 dark:bg-gray-200 text-white dark:text-gray-900"
+  >
+    تغییر تم
+  </button>
+</div>
+
+</body> 
+</html>

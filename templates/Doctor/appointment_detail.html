@@ -1,0 +1,171 @@
+{% extends "_base.html" %}
+{% load static %}
+{% block page_title %}جزئیات نوبت{% endblock page_title %}
+
+{% block content %}
+
+<!-- Wrapper برای ایجاد فاصله از بالا و مرکز صفحه -->
+<div class="page-wrapper">
+    
+    <!-- Main Card -->
+    <div class="main-card">
+    
+        <!-- Doctor Info -->
+        <div class="doctor-info">
+            <img src="{{ doctor.image.url }}" alt="doctor" class="doctor-image">
+            <div>
+                <h2 class="doctor-name">{{ doctor.name }}</h2>
+                <p class="doctor-speciality">{{ doctor.speciality }}</p>
+                <p class="appointment-time">⏱ زمان نوبت: {{ appointment.time }}</p>
+                <p class="appointment-date">📅 تاریخ: {{ appointment.date|date:"j F Y" }}</p>
+            </div>
+        </div>
+    
+        <!-- Patient Info -->
+        <div class="patient-info">
+            <p class="patient-label">مراجعه کننده: برای چه کسی نوبت می‌گیرید؟</p>
+
+            <div class="patient-box">
+              <span>(خودم)</span>
+              <a href="#" class="edit-link">ویرایش</a>
+                   </div>
+
+            <a href="#" class="other-patient">+ دریافت نوبت برای شخص دیگر</a>
+        </div>
+
+        <!-- دکمه ادامه -->
+        <div class="continue-btn-wrapper">
+            <a href="{% url 'payment' appointment.id %}" class="continue-btn">ادامه</a>
+        </div>
+    
+    </div>
+</div>
+
+<!-- CSS -->
+<style>
+/* Wrapper فاصله از بالا و مرکز صفحه */
+.page-wrapper {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding-top: 60px; /* فاصله از بالا */
+    background-color: #f5f5f5;
+}
+
+/* باکس اصلی */
+.main-card {
+    width: 100%;
+    max-width: 800px;
+    background-color: #ffffff;
+    padding: 24px;
+    border-radius: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* اطلاعات دکتر */
+.doctor-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.doctor-image {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%; /* گرد کردن عکس */
+    object-fit: cover;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.doctor-name {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.doctor-speciality {
+    font-size: 14px;
+    color: #666;
+    margin: 2px 0;
+}
+
+.appointment-time,
+.appointment-date {
+    font-size: 14px;
+    color: #333;
+    margin: 2px 0;
+}
+
+/* اطلاعات بیمار */
+.patient-info {
+    background-color: #f0f0f0;
+    padding: 16px;
+    border-radius: 12px;
+}
+
+.patient-label {
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.patient-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    margin-bottom: 12px;
+}
+
+.edit-link {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.edit-link:hover {
+    text-decoration: underline;
+}
+
+.other-patient {
+    display: block;
+    text-align: center;
+    color: #007bff;
+    text-decoration: none;
+    font-size: 14px;
+    padding: 10px 0;
+    border: 1px solid #007bff;
+    border-radius: 12px;
+    transition: 0.3s;
+}
+
+.other-patient:hover {
+    background-color: #e6f0ff;
+}
+
+/* دکمه ادامه */
+.continue-btn-wrapper {
+    margin-top: 24px;
+    text-align: center;
+}
+
+.continue-btn {
+    display: inline-block;
+    padding: 12px 24px;
+    background-color: #007bff;
+    color: white;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.3s;
+}   
+
+.continue-btn:hover {
+    background-color: #0056b3;
+}
+</style>
+
+{% endblock content %}

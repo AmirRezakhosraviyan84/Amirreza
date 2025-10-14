@@ -1,0 +1,27 @@
+{% extends '_base.html' %}
+
+{% block page_title %}dr_behbood_doctors{% endblock page_title %}
+
+
+ {% block content %}
+ 
+ 
+ 
+<div class ='modal-box'>
+    <h2>لیست دکترهای مرکز{{clinic.name}}</h2>
+{%for doctor in doctors%}
+  <div class="doctor-card">
+    <div class="doctor-info">
+        <h4>{{doctor.name}}</h4>
+        <p>{{doctor.specialty}}</p>
+        <p>{{doctor.rating}} ({{ com|length }} نظر)</p>
+        <button onclick= "location.href ='{% url 'appointments_by_date' doctor.id%}'" class ='btn-reserve'>
+                 نوبت بکیرید
+        </button>
+        </div>
+  </div>
+  {% endfor %}
+</div>
+
+ 
+ {% endblock content %}

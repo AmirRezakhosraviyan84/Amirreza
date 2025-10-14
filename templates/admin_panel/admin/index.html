@@ -1,0 +1,60 @@
+{% load static %}
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>پنل مدیریت</title>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Alpine.js + Persist -->
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/@alpinejs/persist@3.x.x/dist/cdn.min.js" defer></script>
+
+  <link rel="stylesheet" href="{% static 'admin/css/style.css' %}">
+</head>
+<body
+  x-data="{ darkMode: JSON.parse(localStorage.getItem('darkMode') || 'false'), sidebarToggle: false }"
+  x-init="$watch('darkMode', value => localStorage.setItem('darkMode', JSON.stringify(value)))"
+  :class="{'dark bg-gray-900 text-gray-100': darkMode}"
+>
+
+  <!-- Preloader -->
+  {% include 'admin_panel/admin/partials/preloader.html' %}
+
+  <div class="flex h-screen overflow-hidden">
+    {% include 'admin_panel/admin/partials/sidebar.html' %}
+
+    <div class="relative flex flex-col flex-1 overflow-x-hidden overflow-y-auto">
+      {% include 'admin_panel/admin/partials/overlay.html' %}
+      {% include 'admin_panel/admin/partials/header.html' %}
+
+      <main class="p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6">
+        <h1 class="text-2xl font-bold mb-6 text-gray-800 dark:text-gray-200">داشبورد مدیریتی</h1>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {% for model in models %}
+          <div class="p-5 rounded-xl shadow bg-white dark:bg-gray-800 hover:shadow-lg transition">
+            <div class="flex justify-between items-center">
+              <div>
+                <h4 class="text-gray-700 dark:text-gray-300 font-semibold">{{ model.name }}</h4>
+                <p class="text-3xl font-bold text-blue-600 dark:text-blue-400 mt-2">{{ model.count }}</p>
+              </div>
+              <div class="text-gray-500 dark:text-gray-400">
+                <a href="{{ model.url }}" class="hover:text-blue-500">→</a>
+              </div>
+            </div>
+          </div>
+          {% empty %}
+          <p class="col-span-4 text-center text-gray-500 dark:text-gray-400">مدلی برای نمایش وجود ندارد.</p>
+          {% endfor %}
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="{% static 'admin/js/index.js' %}"></script>
+</body>
+</html>

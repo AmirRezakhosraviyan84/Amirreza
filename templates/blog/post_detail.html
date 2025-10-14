@@ -1,0 +1,372 @@
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=2">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" /> 
+
+    <!-- نوبار اول -->
+    <header class="top-navbar">
+        <div class="container flex justify-between items-center">
+        <div class="top-links">
+            <a href="{% url 'doctor_list' %}">نوبت‌دهی مطب</a>
+            <span class="dot"></span>
+            <a href="{% url 'medicalcenter-list' %}">مراکز درمانی</a>
+            <span class="dot"></span>
+            <a href="{%  url 'doctor_to_services' %}">دکترتو کلینیک</a>
+            <span class="dot"></span>
+            <a href=>دکتر مغز و اعصاب</a>
+        </div>
+        <div class="social-icons">
+            <a href="{% static 'icons/telegram--1410.png' %}"><i class="fab fa-telegram"></i></a>
+            <a href="{% static 'icons/instagram--1364.png' %}"><i class="fab fa-instagram"></i></a>
+            <a href="{% static 'icons/linkedin--1372.png' %}"><i class="fab fa-linkedin"></i></a>
+            <a href=><i class="fab fa-youtube"></i></a>
+            <a href=><i class="fab fa-twitter"></i></a>
+        </div>
+        </div>
+    </header>
+    <!-- نوبار دوم -->
+    <nav class="sub-navbar">
+    <div class="container">
+        <!-- لوگو -->
+        <div class="logo">
+        <a href="/"><img src="{% static 'images/doctoreto-blog.png' %}" alt="Doctoreto Blog"></a>
+        </div>
+
+        <!-- منو -->
+        <ul class="category-menu">
+        <li class="menu-item">
+            <a href="#">علائم</a>
+            <div class="dropdown">
+            <a href="#">عفونت</a>
+            </div>
+        </li>
+
+        <li class="menu-item">
+            <a href="#">بیماری</a>
+            <div class="dropdown grid-dropdown">
+            <a href="#">بیماری‌های قلب و عروق</a>
+            <a href="#">بیماری های زنان</a>
+            <a href="#">بیماری های خود ایمنی</a>
+            <a href="#">بیماری های تنفسی</a>
+            <a href="#">بیماری های چشم</a>
+            <a href="#">بیماری های کلیه و ادراری</a>
+            <a href="#">بیماری های کودکان</a>
+            <a href="#">بیماری های استخوان و ارتوپد</a>
+            <a href="#">بیماری های غدد و متابولیسم</a>
+            </div>
+        </li>
+
+        <li class="menu-item">
+            <a href="#">دارو</a>
+            <div class="dropdown grid-dropdown">
+            <a href="#">داروهای ضد حساسیت</a>
+            <a href="#">داروهای ضد التهاب</a>
+            <a href="#">داروهای اعصاب و روان</a>
+            <a href="#">داروهای باروری و ضد بارداری</a>
+            <a href="#">داروهای تیروئید</a>
+            <a href="#">داروهای جنسی</a>
+
+            <!-- زیرمنو برای داروهای قلب و عروق -->
+            <div class="submenu">
+                <a href="#">داروهای قلب و عروق</a>
+                <div class="dropdown">
+                <a href="#">داروهای چربی خون</a>
+                <a href="#">داروهای فشار خون</a>
+                </div>
+            </div>
+
+            <a href="#">داروهای گوارش</a>
+            <a href="#">داروهای آنتی بیوتیک</a>
+            <a href="#">داروهای مکمل و ویتامینی</a>
+            <a href="#">داروهای مسکن</a>
+            </div>
+        </li>
+
+        <li class="menu-item">
+            <a href="#">آزمایش</a>
+            <div class="dropdown">
+            <a href="#">تصویر برداری پزشکی</a>
+            </div>
+        </li>
+
+        <li class="menu-item">
+            <a href="#">زندگی سالم</a>
+            <div class="dropdown">
+            <a href="#">زیبایی</a>
+            <a href="#">سلامت روان</a>
+            <a href="#">سلامت جنسی</a>
+            <a href="#">تغذیه و رژیم</a>
+            <a href="#">مادر و کودک</a>
+            <a href="#">سبک زندگی</a>
+            </div>
+        </li>
+
+        <li class="menu-item">
+            <a href="#">خبر</a>
+        </li>
+
+        <li class="menu-item">
+            <a href="#">شاخص آلودگی هوای تهران</a>
+        </li>
+        </ul>
+
+    <!-- آیکون سرچ -->
+    <div class="search-box" id="navSearchBox">🔍</div>
+
+    <div class="search-popup" id="searchPopup">
+    <div class="overlay" id="searchOverlay"></div>
+    <div class="popup-content large">
+        <button class="close-btn" id="closeSearchBtn">×</button>
+        <h2 class="popup-title">جستجوی مقالات</h2>
+        <input type="text" placeholder="جستجو...">
+    </div>
+    </div>
+
+
+        <!-- دکمه همبرگری -->
+        <button class="hamburger" onclick="toggleMenu()">☰</button>
+    </div>
+    </nav>
+
+    <!-- اسکریپت‌ها -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+    // منوی موبایل
+    document.querySelectorAll(".category-menu .menu-item > a").forEach(link => {
+        link.addEventListener("click", function(e) {
+        if (window.innerWidth <= 768) {
+            e.preventDefault();
+            this.parentElement.classList.toggle("open");
+        }
+        });
+    });
+
+    const searchBox = document.getElementById('navSearchBox');
+    const searchPopup = document.getElementById('searchPopup');
+    const searchOverlay = document.getElementById('searchOverlay');
+    const closeSearchBtn = document.getElementById('closeSearchBtn');
+
+    searchBox.addEventListener('click', () => {
+    searchPopup.style.display = 'block';
+    searchPopup.querySelector('.popup-content').style.display = 'block';
+    });
+
+    searchOverlay.addEventListener('click', () => {
+    searchPopup.style.display = 'none';
+    searchPopup.querySelector('.popup-content').style.display = 'none';
+    });
+
+    closeSearchBtn.addEventListener('click', () => {
+    searchPopup.style.display = 'none';
+    searchPopup.querySelector('.popup-content').style.display = 'none';
+    });
+
+
+    });
+
+    // همبرگر
+    function toggleMenu() {
+    document.querySelector(".category-menu").classList.toggle("open");
+    }
+    </script>
+
+    <article class="post-article">
+    <h1>{{ post.title }}</h1>
+    <p>نویسنده: {{ post.author }} | تاریخ: {{ post.date_time_created|date:"Y-m-d" }}</p>
+
+  
+
+    <!-- کانتینر محتوا و تصاویر -->
+  <!-- سلکت باکس یا TOC -->
+    <div class="article-controls">
+        <select id="sectionSelect">
+        <option value="">انتخاب بخش...</option>
+        {% for item in toc %}
+            <option value="{{ item.id }}">{{ item.title }}</option>
+        {% endfor %}
+        </select>
+    </div>  
+        <div class="article-content">
+        {{ content|safe }}
+        
+        </div>
+      
+    </div>
+    </article>
+
+
+    <script>
+    // اسکرول نرم برای TOC
+    document.querySelectorAll('.toc a').forEach(a=>{
+        a.addEventListener('click', function(e){
+        e.preventDefault();
+        const id = this.getAttribute('href').slice(1);
+        const el = document.getElementById(id);
+        if(el) el.scrollIntoView({behavior:"smooth"});
+        });
+    });
+    </script>
+
+    <script>
+    const select = document.getElementById('sectionSelect');
+
+    select.addEventListener('change', function() {
+    const sectionId = this.value;
+    if(sectionId){
+        const section = document.getElementById(sectionId);
+        if(section){
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+    });
+    </script>
+
+    
+    <script>
+document.addEventListener("DOMContentLoaded", function() {
+    const articleContent = document.querySelector(".article-content");
+    const firstImg = articleContent.querySelector("img");
+    const socialButtons = document.getElementById("socialButtons");
+
+    if(firstImg){
+        firstImg.insertAdjacentElement('afterend', socialButtons);
+    } else {
+        articleContent.prepend(socialButtons);
+    }
+
+    // افکت ظاهر شدن
+    setTimeout(() => {
+        socialButtons.style.display = 'flex';
+        socialButtons.style.opacity = 1;
+        socialButtons.style.transform = 'translateY(0)';
+    }, 100);
+});</script>
+
+
+    <style>
+  /* کانتینر اصلی مقاله */
+article.post-article {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 0 20px;
+  display: block; /* حذف flex */
+}
+
+/* سلکت‌باکس / TOC */
+.article-controls {
+  margin-bottom: 25px;
+}
+
+/* متن مقاله */
+.article-content {
+  font-size: 16px;
+  line-height: 1.8;
+  word-break: break-word;
+  display: block;
+}
+
+/* تیترها داخل مقاله */
+.article-content h2,
+.article-content h3 {
+  display: block;
+  clear: both;
+  margin-top: 30px;
+  margin-bottom: 15px;
+}
+
+/* تصاویر و جداول داخل مقاله */
+.article-content img,
+.article-content table {
+  display: block;        /* بلاک */
+  margin: 25px auto;     /* وسط چین + فاصله بالا و پایین */
+  max-width: 100%;
+  border-radius: 10px;
+}
+.article-content p,
+.article-content h2,
+.article-content h3,
+.article-content ul,
+.article-content ol {
+    display: block;
+    width: 100%;
+    clear: both; /* جلوگیری از متن کنار تصویر */
+    margin-bottom: 16px;
+}
+/* تصاویر داخل مقاله */
+.article-content img {
+    display: block;
+    margin: 25px auto; /* وسط چین + فاصله بالا و پایین */
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    clear: both;
+}
+
+/* جداول داخل مقاله */
+.article-content table {
+    display: table; /* بلاک شدن جدول */
+    margin: 25px auto;
+    border-collapse: collapse;
+    width: 100% !important; /* اطمینان از پهنای 100% */
+}
+
+
+
+
+/* تیترها */
+.article-content h2, .article-content h3 {
+    clear: both;
+}
+.article-content .highlight-box {
+    background-color: #f5f5f5;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+.social-links {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.social-btn {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #fff;
+  font-size: 16px;
+  padding: 15px 20px;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.social-btn.instagram {
+  background: linear-gradient(90deg, #f9ce34, #ee2a7b, #6228d7);
+}
+.social-btn.telegram {
+  background: #29a9eb;
+}
+.social-btn.youtube {
+  background: #ff0000;
+}
+.social-btn.aparat {
+  background: linear-gradient(90deg, #ff416c, #ff4b2b);
+}
+
+
+/* ریسپانسیو */
+@media (max-width: 992px) {
+    .article-content {
+        padding: 0 10px;
+    }
+
+    .article-content img,
+    .article-content table {
+        width: 100% !important;
+        margin: 20px 0;
+    }
+}
+
+    </style>
+

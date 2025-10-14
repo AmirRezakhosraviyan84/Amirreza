@@ -1,0 +1,328 @@
+{% extends '_base.html' %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+
+{% block page_title %}labratory{% endblock page_title %}
+  <!-- Hero section -->
+{% block content %}
+
+<div class="hero-section">
+  <div class="hero-content">
+    <h1>لیست دقیق ترین و بهترین آزمایشگاه های ایران</h1>
+    <p>آزمایشگاه یا تخصص مورد نظر خود را به راحتی جستجو کنید</p>
+       <br>
+     <form method="GET" action="{% url 'search_to_lab_detail' %}" class="search-container">
+    <select class="city-select" name="city">
+      <option value="" disabled selected>جستجوی شهرها</option>
+      {% for c in cit %}
+        <option value="{{ c.pk }}">{{ c.name }}</option>
+      {% endfor %}
+    </select>
+
+    <input type="text" class="search-input" name="query" placeholder="جستجوی دکتر، تخصص یا آزمایشگاه...">
+
+    <button type="submit" class="search-btn">🔍</button>
+  </form>
+
+
+
+
+    </div>
+  </div>
+</div>
+
+      
+
+  <!-- تست‌های پرکاربرد -->
+<div style="width: 100%; margin-bottom: 2rem; text-align: right; padding-right: 90px;">
+    <h3 style="font-size: 1.  5rem; font-weight: bold; display: block; margin-top: 3rem; color:white;">
+        شهر های دارای آزمایشگاه دکترتو
+    </h3>
+
+
+    <!-- در head یا قبل از </body> -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+
+      <div class="text-end mt-2">
+    <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#cityModal">
+        مشاهده همه شهرها
+    </a>
+
+       <div class="modal fade" id="cityModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">انتخاب شهر</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input id="citySearch" type="text" class="form-control mb-3" placeholder="جستجوی شهر...">
+                        <div id="cityList" class="list-group" style="max-height: 400px; overflow-y: auto;">
+                            {% for c in cit %}
+                            <a href="{% url 'city_detail' c.pk %}" class="list-group-item list-group-item-action city-item">
+                                {{ c.name }}
+                            </a>
+                            {% empty %}
+                            <div class="text-muted">شهری موجود نیست</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <script>
+document.getElementById("citySearch").addEventListener("keyup", function() {
+    var filter = this.value.toLowerCase();
+    var items = document.querySelectorAll("#cityList .city-item");
+
+    items.forEach(function(item) {
+        if (item.textContent.toLowerCase().includes(filter)) {
+            item.style.display = "";
+        } else {
+            item.style.display = "none";
+        }
+    });
+});
+</script>
+    </div>
+</div>
+
+<div class="box-container">
+    {% for c in cit %}
+    <div class="box">
+        <a href="{% url 'labratory_detail' c.pk %}">{{ c.name }}</a>
+        <p>---------------------------------------------------</p>
+        <div class="box-links">
+           
+        </div>
+    </div>
+    {% empty %}
+    <p>هیچ موردی پیدا نشد.</p>
+    {% endfor %}
+</div>
+
+<div style="width: 100%; margin-bottom: 2rem; text-align: right; padding-right: 90px;">
+    <h3 style="font-size: 1.5rem; font-weight: bold; display: block; margin-top: 3rem;">
+        آزمایشگاه های دکترتو برای انجام تست
+    </h3>
+
+    <div class="box-container">
+        {% for l in labs %}
+        <div class="labs-box">
+            <br>
+            <br>
+            <h6>آزمایشگاه</h6>
+            <a href="{% url 'labratory_detail' l.pk %}">{{ l.name }}</a> 
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div style="width: 100%; margin-bottom: 2rem; text-align: right; padding-right: 90px;">
+    <h3 style="font-size: 1.5rem; font-weight: bold; display: block; margin-top: 3rem;">
+        جدیدترین آزمایشگاه ها در دکترتو
+    </h3>
+<div class="swiper mySwiper">
+    <div class="swiper-wrapper">
+        {% for l in lab %}
+        <div class="swiper-slide">
+            <div class="info-box">
+                <img src="{{ l.image.url }}">
+                <a href="{% url 'labratory_detail' l.pk %}">{{ l.name }} <br> {{ l.city }}</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev"></div>
+</div>
+<footer style="width:100%; background:#fff; border-top:1px solid #ddd; padding:30px 20px; direction:rtl; box-sizing:border-box; margin-left:50px;">
+
+  <!-- بخش بالا فوتر -->
+  <div class="top-footer" style="
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));
+    gap:30px;
+    width:100%;
+    box-sizing:border-box;
+  ">
+    <!-- خدمات -->
+    <div class="services">
+      <h3 style="font-size:1.1rem; font-weight:bold; margin-bottom:10px;">خدمات دکتروتو</h3>
+      <ul style="list-style:none; padding:0; margin:0;">
+        <li style="margin-bottom:6px;">
+          <a href="#" style="color:#333; text-decoration:none;">نوبت دهی مطب</a>
+          <a href="#" style="color:#333; text-decoration:none; margin-right:70px;">دکترتو کلینیک</a>
+        </li>
+        <li style="margin-bottom:6px;">
+          <a href="#" style="color:#333; text-decoration:none;">مشاوره تلفنی</a>
+          <a href="#" style="color:#333; text-decoration:none; margin-right:90px;">مراکز درمانی</a>
+        </li>
+        <li style="margin-bottom:6px;">
+          <a href="#" style="color:#333; text-decoration:none;">مشاوره متنی</a>
+          <a href="#" style="color:#333; text-decoration:none; margin-right:90px;">مجله سلامت</a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- صفحات -->
+    <div class="pages" style="text-align:right;">
+      <h3 style="font-size:1.1rem; font-weight:bold; margin-bottom:10px;">صفحات دکتروتو</h3>
+      <ul style="list-style:none; padding:0; margin:0;">
+        <li style="margin-bottom:6px;">
+          <a href="#" style="color:#333; text-decoration:none;">درباره ما</a>
+          <a href="#" style="color:#333; text-decoration:none; margin-right:60px;">قوانین و مقررات</a>
+        </li>
+        <li style="margin-bottom:6px;">
+          <a href="#" style="color:#333; text-decoration:none;">سوالات متداول</a>
+          <a href="#" style="color:#333; text-decoration:none; margin-right:20px;">قوانین ثبت نظر</a>
+        </li>
+        <li style="margin-bottom:6px;">
+          <a href="#" style="color:#333; text-decoration:none;">ثبت نام پزشکان</a>
+          <a href="#" style="color:#333; text-decoration:none; margin-right:20px;">تماس با ما</a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- در کنار شما -->
+    <div class="pages" style="text-align:right;">
+      <h3 style="font-size:1.1rem; font-weight:bold; margin-bottom:10px;">در کنار شما</h3>
+      <ul style="list-style:none; padding:0; margin:0;">
+        <li style="margin-bottom:6px;"><a href="#" style="color:#333; text-decoration:none;">تخصص های پزشکی</a></li>
+        <li style="margin-bottom:6px;"><a href="#" style="color:#333; text-decoration:none;">موقعیت های شغلی</a></li>
+      </ul>
+    </div>
+
+    <!-- اپلیکیشن -->
+    <div class="pages" style="text-align:left;">
+      <h2 style="font-size:1.1rem; font-weight:bold; margin-bottom:10px;">اپلیکیشن دکترتو را دریافت کنید</h2>
+      <div class="app-buttons" style="margin-top:10px; display:flex; flex-direction:column; gap:10px; align-items:flex-start;">
+        <a href="https://cafebazaar.ir/app/ir.hivatec.doctoreto" target="_blank" 
+           style="padding:14px 0; font-size:1rem; color:#4CAF50; text-decoration:none; border:2px solid #4CAF50; border-radius:8px; background-color:transparent; text-align:center; min-width:200px; display:block; transition:0.3s;">
+            دانلود از کافه بازار
+        </a>
+        <a href="https://doctoreto.com/direct_download/doctoreto-4.7.3.apk" target="_blank" 
+           style="padding:14px 0; font-size:1rem; color:#0070C9; text-decoration:none; border:2px solid #0070C9; border-radius:8px; background-color:transparent; text-align:center; min-width:200px; display:block; transition:0.3s;">
+           دانلود مستقیم نسخه اندروید 
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- خط جداکننده -->
+  <div style="width:100%; height:1px; background:#ddd; margin:30px 0;"></div>
+
+  <!-- بخش پایین فوتر -->
+  <div class="bottom-footer" style="display:flex; flex-wrap:wrap; justify-content:space-between; gap:20px; width:100%; box-sizing:border-box;">
+
+    <!-- بلوک توضیح + لوگو + دکمه بیشتر + تصاویر -->
+    <div class="description" style="text-align:right; max-width:400px;">
+      <img src="{% static 'icons/doctoreto-logo.png' %}" alt="لوگو" style="height:50px; margin-bottom:10px;">
+      <p id="short-text" style="
+          color:#555; 
+          font-size:0.9rem; 
+          line-height:1.4;
+          display:-webkit-box;
+          -webkit-line-clamp:3;
+          -webkit-box-orient:vertical;
+          overflow:hidden;
+          text-overflow:ellipsis;
+      ">
+        دکترتو ساده‌ترین راه نوبت‌ دهی اینترنتی و مشاوره آنلاین پزشکان ایران است...
+      </p>
+      <button id="read-more" style="background:none; border:none; color:#0070C9; cursor:pointer; font-size:0.9rem; padding:0; margin-top:5px;">بیشتر</button>
+
+      <div class="icons-row" style="display:flex; gap:15px; margin-top:15px; flex-wrap:wrap; justify-content:flex-start;">
+        <img src="{% static 'images/enamad.png' %}" alt="نماد 1" style="height:50px;">
+        <img src="{% static 'images/samandehi.png' %}" alt="نماد 2" style="height:50px;">
+        <img src="{% static 'images/etehadie-logo.png' %}" alt="نماد 3" style="height:50px;">
+        <img src="{% static 'images/saman-kish-logo.png' %}" alt="نماد 4" style="height:50px;">
+        <img src="{% static 'images/mellat.png' %}" alt="نماد 5" style="height:50px;">
+      </div>
+    </div>
+     <div class="social" style="text-align:right;">
+  <h4 style="margin-bottom:10px;">با ما در ارتباط باشید</h4>
+   <p>ایمیل:</p>
+  <!-- ایمیل با آیکون -->
+  <div style="display:flex; align-items:center; gap:8px;">
+    <img src="{% static 'icons/email.png' %}" alt="ایمیل" style="height:24px;">
+    <a href="mailto:info@doctoreto.com" style="color:#0070C9; text-decoration:none;">info@doctoreto.com</a>
+  </div>
+</div>
+<div class="social" style="text-align:right;">
+  <h4 style="margin-bottom:10px;">شبکه های اجتماعی</h4>
+  <!-- آیکون‌ها با تصویر -->
+  <a href="https://www.instagram.com" target="_blank" style="margin-left:10px;">
+    <img src="{% static 'icons/instagram--1364.png' %}" alt="اینستاگرام" style="width:30px; height:30px;">
+  </a>
+  <a href="https://www.telegram.org" target="_blank" style="margin-left:10px;">
+    <img src="{% static 'icons/telegram--1410.png' %}" alt="تلگرام" style="width:30px; height:30px;">
+  </a>
+  <a href="https://www.linkedin.com" target="_blank" style="margin-left:10px;">
+    <img src="{% static 'icons/linkedin--1372.png' %}" alt="لینکدین" style="width:30px; height:30px;">
+  </a>
+  <a href="https://www.twitter.com" target="_blank" style="margin-left:10px;">
+    <img src="{% static 'icons/images.png' %}" alt="اپارات" style="width:30px; height:30px;">
+  </a>
+</div>
+
+ 
+
+  </div>
+    <div style="width:100%; height:1px; background:#ddd; margin:30px 0;"></div>
+   <div class='text' style="text-align:center;">
+    <p>کلیه‌ی حقوق این وبسایت متعلق به شرکت دانش بنیان فن‌آوری اطلاعات امیررضا خسرویان  است.</p>
+   </div> 
+      <div style="width:100%; height:1px; background:#ddd; margin:30px 0;"></div>
+       <!-- خدمات -->
+    <div class="services">
+      <h3 style="font-size:1.1rem; font-weight:bold; margin-bottom:10px;">شهرهای دکترتو</h3>
+      <ul style="list-style:none; padding:0; margin:0;">
+        <li style="margin-bottom:6px;">
+          <a href="#" style="color:#333; text-decoration:none;">دکترتو تهران</a>
+          <a href="#" style="color:#333; text-decoration:none; margin-right:120px;">دکترتو اصفهان</a>
+          <a href="#" style="color:#333; text-decoration:none; margin-right:120px;">دکترتو شیراز</a>
+          <a href="#" style="color:#333; text-decoration:none; margin-right:120px;">دکترتو بوشهر</a>
+          <a href="#" style="color:#333; text-decoration:none; margin-right:120px;">دکترتو مشهد</a>
+        </li>
+        <li style="margin-bottom:6px;">
+          <a href="#" style="color:#333; text-decoration:none;">دکترتو بندرعباس</a>
+          <a href="#" style="color:#333; text-decoration:none; margin-right:90px;">دکترتو اهواز</a>
+          <a href="#" style="color:#333; text-decoration:none; margin-right:140px;">دکترتو کرج</a>
+          <a href="#" style="color:#333; text-decoration:none; margin-right:120px;">دکترتو کرمان</a>
+          <a href="#" style="color:#333; text-decoration:none; margin-right:130px;">دکترتو تبریز</a>
+
+           
+        </li>
+        
+      </ul>
+    </div>
+
+</footer>
+
+<script>
+  const btn = document.getElementById("read-more");
+  const text = document.getElementById("short-text");
+  let expanded = false;
+
+  btn.addEventListener("click", () => {
+    if (!expanded) {
+      text.style.webkitLineClamp = "unset";
+      btn.innerText = "کمتر";
+      expanded = true;
+    } else {
+      text.style.webkitLineClamp = "3";
+      btn.innerText = "بیشتر";
+      expanded = false;
+    }
+  });
+</script>
+
+
+{% endblock content %}
+
+

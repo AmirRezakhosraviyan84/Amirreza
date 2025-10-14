@@ -1,0 +1,149 @@
+{% extends '_base.html' %}
+{% load static %}
+{% block page_title %}labratory_detail{% endblock page_title %}
+
+{% block content %}
+
+<div class="container-fluid my-4">
+    <div class="row">
+        <!-- فیلترها -->
+        <div class="col-md-3">
+            <div class="my_box sticky-top p-3 shadow-sm" style="top: 80px; background: #fff; border-radius: 8px;">
+
+                <!-- تب‌ها ردیفی -->
+                <div class="d-flex justify-content-between mb-3">
+                    {% for tab in tabs %}
+                        <button class="btn btn-outline-secondary" type="button" data-tab="{{ tab.id }}">{{ tab.label }}</button>
+                    {% endfor %}
+                </div>
+
+                <!-- دکمه حذف فیلتر -->
+                {% if request.GET %}
+                <a href="{% url 'doctor_list' %}" class="btn btn-warning w-100 mb-3">حذف فیلترها</a>
+                {% endif %}
+
+                <!-- فرم‌ها برای هر تب -->
+                {% for tab in tabs %}
+                <div id="{{ tab.id }}" class="tab-content mb-3" style="{% if tab.id != 'clinic' %}display:none{% endif %};">
+                    <form method="get" action="{% url 'doctor_list' %}">
+                        <!-- تخصص -->
+                        <div class="mb-3">
+                            <label class="form-label">نوع آزمایش</label>
+                            <select name="specialty" class="form-select" onchange="this.form.submit()">
+                                <option value="">انتخاب کنید</option>
+                                {% for l in labs %}
+                                <option value="{{ l.id }}" {% if request.GET.Lab_specialty == l.id|stringformat:"s" %}selected{% endif %}>{{ l.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        {% if tab.id == 'clinic' %}
+                        <!-- فیلترهای نوبت مطب -->
+                        <div class="mb-3">
+                            <label class="form-label">خدمات</label>
+                            <select name="service" class="form-select" onchange="this.form.submit()">
+                                <option value="">انتخاب کنید</option>
+                                {% for s in services %}
+                                <option value="{{ s.id }}" {% if request.GET.service == s.id|stringformat:"s" %}selected{% endif %}>{{ s.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">شهر</label>
+                            <select name="city" class="form-select" onchange="this.form.submit()">
+                                <option value="">انتخاب کنید</option>
+                                {% for c in cities %}
+                                <option value="{{ c.id }}" {% if request.GET.city == c.id|stringformat:"s" %}selected{% endif %}>{{ c.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">بیمه</label>
+                            <select name="insurance" class="form-select" onchange="this.form.submit()">
+                                <option value="">انتخاب کنید</option>
+                                {% for i in insurances %}
+                                <option value="{{ i.id }}" {% if request.GET.insurance == i.id|stringformat:"s" %}selected{% endif %}>{{ i.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        {% else %}
+                        <!-- فیلترهای مشاوره -->
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" name="urgent" value="1" {% if request.GET.urgent %}checked{% endif %} onchange="this.form.submit()">
+                            <label class="form-check-label">مشاوره فوری</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" name="available" value="1" {% if request.GET.available %}checked{% endif %} onchange="this.form.submit()">
+                            <label class="form-check-label">پزشکان دارای نوبت باز</label>
+                        </div>
+                        {% endif %}
+
+                    
+                        </div>
+                    </form>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- لیست پزشکان -->
+        <div class="col-md-9" style="max-height: calc(100vh - 100px); overflow-y: auto; padding-left: 15px;">
+            <h5 class="mb-3">لیست پزشکان</h5>
+
+            <div class='media-box mb-3'>
+                <div class='media-text'>نوبت‌دهی اینترنتی بهترین دکترهای ایران</div>
+            </div>
+
+            <!-- Sorting -->
+            <div class="sorting-box mb-3">
+                <div class="text-sorting">مرتب سازی بر اساس:</div>
+                <a href="?{% for k,v in request.GET.items %}{% if k != 'sort' %}{{k}}={{v}}&{% endif %}{% endfor %}sort=popular"
+                   class="{% if request.GET.sort == 'popular' %}active-sort{% endif %}">محبوب‌ترین</a>
+                <a href="?{% for k,v in request.GET.items %}{% if k != 'sort' %}{{k}}={{v}}&{% endif %}{% endfor %}sort=next"
+                   class="{% if request.GET.sort == 'next' %}active-sort{% endif %}">نزدیک‌ترین نوبت</a>
+                <a href="?{% for k,v in request.GET.items %}{% if k != 'sort' %}{{k}}={{v}}&{% endif %}{% endfor %}sort=successful"
+                   class="{% if request.GET.sort == 'successful' %}active-sort{% endif %}">بیشترین نوبت موفق</a>
+            </div>
+
+            {% for doctor in doctors %}
+            <div class="card mb-3 shadow-sm">
+                <div class="row g-0">
+                    <div class="col-md-3">
+                        {% if doctor.image %}
+                        <img src="{{ doctor.image.url }}" class="img-fluid rounded-start" alt="{{ doctor.name }}">
+                        {% else %}
+                        <img src="{% static 'icon/najafi.jpg' %}" class="img-fluid rounded-start" alt="Doctor">
+                        {% endif %}
+                    </div>
+                    <div class="col-md-9">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ doctor.name }}</h5>
+                            <p class="card-text text-muted">{% if doctor.specialty %}{{ doctor.specialty.name }}{% else %}بدون تخصص{% endif %}</p>
+                            <p class="card-text">{{ doctor.address }}</p>
+                            <p class="card-text"><small class="text-success">امتیاز: {{ doctor.rating }}</small></p>
+                            <a href="{% url 'appointments_by_date' doctor.id %}" class="btn btn-primary btn-sm">نوبت دهی مطب</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p>پزشکی پیدا نشد.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+    // سوئیچ تب‌ها
+    const buttons = document.querySelectorAll('.my_box button[data-tab]');
+    buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tab = btn.getAttribute('data-tab');
+            document.querySelectorAll('.tab-content').forEach(f => f.style.display = 'none');
+            document.getElementById(tab).style.display = 'block';
+        });
+    });
+</script>
+
+
+{% endblock content %}

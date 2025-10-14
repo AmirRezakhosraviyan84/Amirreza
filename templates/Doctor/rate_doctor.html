@@ -1,0 +1,273 @@
+{% extends "_base.html" %}
+{%load static%}
+  <link rel="stylesheet" href="{% static 'css/style.css' %}?v=1">
+{% block page_title %}doctor_rating{% endblock page_title %}
+
+{% block content %}
+
+  <div class="container">
+    <div class="card">
+      <div class="doctor-header">
+        <div class="doctor-avatar">
+          <img src="{{ doctor.image.url }}" alt="{{ doctor.name }}">
+        </div>
+        <div class="doctor-info">
+          <div class="doctor-name">{{ doctor.name }}</div>
+          <div class="doctor-specialty">{{ doctor.specialty }}</div>
+        </div>
+        <div style="text-align:left">
+          <!-- می‌تونی لوگو یا چیزی بذاری -->
+        </div>
+      </div>
+
+      <div class="card-body">
+        <!-- SUMMARY -->
+        <div class="summary">
+          <div class="rating-top">
+            <div class="avg-score">
+              <div class="score" id="avgScore">{{ avg_rating|default:"0.0" }}</div>
+              <div class="count">{{ total_reviews|default:"0" }} کاربر</div>
+            </div>
+            <div class="stars-row" aria-hidden="true">
+              <!-- 5 ستاره نمایش میانگین -->
+              {% for i in "12345" %}
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 .587l3.668 7.431L23.6 9.75l-5.4 5.26L19.8 24 12 19.897 4.2 24l1.6-8.99L.4 9.75l7.932-1.732z"/></svg>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="criteria-list" id="criteriaList">
+            {% comment %} هریک از آیتم‌ها: label, avg_value (مثلاً 4.85) و درصد پر بودن نوار {% endcomment %}
+            {% for crit in criteria %}
+            <div class="crit">
+              <div class="label">{{ crit.label }}</div>
+              <div class="progress-wrap">
+                <div class="progress">
+                  <i style="width:{{ crit.percent }}%"></i>
+                </div>
+              </div>
+              <div class="value">{{ crit.value }}</div>
+            </div>
+            {% endfor %}
+          </div>
+
+          <div class="summary-stats">
+            <div class="item">
+              <div class="big">{{ recommend_percent|default:"0" }}%</div>
+              <div>پیشنهاد کاربران</div>
+            </div>
+            <div style="width:1px;background:#f0f2f7;height:42px;margin-inline:6px;border-radius:2px"></div>
+            <div class="item">
+              <div class="big">{{ avg_wait_label|default:"۱۵-۰ دقیقه" }}</div>
+              <div>میانگین زمان انتظار</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FORM -->
+        <form class="review-form" method="post" action="{% url 'doctor-review' doctor.id %}">
+          {% csrf_token %}
+          <div>
+            <div class="section-title">به تجربیاتتان از نوبت گرفته شده چه امتیازی می‌دهید؟*</div>
+            <div class="overall-stars" style="justify-content:flex-start;gap:12px;margin-top:8px">
+              <div class="star-row" role="radiogroup" aria-label="overall rating">
+                {% for val in "54321" %}
+                  <input id="overall-{{ val }}" type="radio" name="overall" value="{{ val }}">
+                  <label for="overall-{{ val }}" title="{{ val }} ستاره">
+                    <!-- star svg -->
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M12 .587l3.668 7.431L23.6 9.75l-5.4 5.26L19.8 24 12 19.897 4.2 24l1.6-8.99L.4 9.75l7.932-1.732z"/>
+                    </svg>
+                  </label>
+                {% endfor %}
+              </div>
+              <small id="overallLabel" style="color:var(--muted)">{{ overall_text|default:"امتیاز کلی" }}</small>
+            </div>
+          </div>
+
+          <div style="margin-top:14px;border-top:1px solid #f3f6fa;padding-top:12px">
+            <div class="section-title">آیا دکتر را به سایر کاربران پیشنهاد می‌کنید؟</div>
+           <div style="display:flex;gap:10px;margin-top:8px">
+            <input type="radio" name="recommend_radio" id="recYesInput" value="yes" style="display:none">
+            <input type="radio" name="recommend_radio" id="recNoInput" value="no" style="display:none">
+            <button type="button" class="btn ghost" id="recYes" onclick="setRecommend(true)">پیشنهاد می‌کنم 👍</button>
+             <button type="button" class="btn ghost" id="recNo" onclick="setRecommend(false)">پیشنهاد نمی‌کنم 👎</button>
+               <input type="hidden" name="recommend" id="recommendInput" value="">
+                   </div>      
+          </div>
+
+          <div style="margin-top:14px;border-top:1px solid #f3f6fa;padding-top:12px">
+            <div class="section-title">به هر کدام از موارد زیر چه امتیازی می‌دهید؟</div>
+            <div class="criteria-rate">
+              {% for crit in criteria %}
+              <div class="criteria-item">
+                <div style="flex:1">{{ crit.label }}</div>
+                <div class="stars-inline" role="radiogroup" aria-label="{{ crit.label }}">
+                  {% for s in "54321" %}
+                    <input id="crit-{{ forloop.parentloop.counter }}-{{ s }}" name="crit_{{ forloop.parentloop.counter }}" type="radio" value="{{ s }}">
+                    <label for="crit-{{ forloop.parentloop.counter }}-{{ s }}">
+                      <svg viewBox="0 0 24 24"><path d="M12 .587l3.668 7.431L23.6 9.75l-5.4 5.26L19.8 24 12 19.897 4.2 24l1.6-8.99L.4 9.75l7.932-1.732z"/></svg>
+                    </label>
+                  {% endfor %}
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div style="margin-top:14px;border-top:1px solid #f3f6fa;padding-top:12px">
+            <div class="section-title">زمان انتظار شما در مطب چند دقیقه بود؟*</div>
+            <div class="radio-grid">
+              <div class="radio-card">
+                <input type="radio" id="t1" name="wait_time" value="0-15">
+                <label for="t1">0-15 دقیقه</label>
+              </div>
+              <div class="radio-card">
+                <input type="radio" id="t2" name="wait_time" value="15-45">
+                <label for="t2">۱۵-۴۵ دقیقه</label>
+              </div>
+              <div class="radio-card">
+                <input type="radio" id="t3" name="wait_time" value="45-90">
+                <label for="t3">۴۵-۹۰ دقیقه</label>
+              </div>
+              <div class="radio-card">
+                <input type="radio" id="t4" name="wait_time" value="90+">
+                <label for="t4">بیش از ۹۰ دقیقه</label>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top:14px;border-top:1px solid #f3f6fa;padding-top:12px">
+            <div class="section-title">علت مراجعه شما چه بود؟</div>
+            <select name="reason" style="width:100%;padding:10px;border-radius:8px;border:1px solid #e7ecf6">
+              <option value="">گزینه موردنظر را انتخاب کنید</option>
+              {% for r in reasons %}
+              <option value="{{ r.id }}">{{ r.label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div style="margin-top:14px">
+            <div class="section-title">تجربه شما از این نوبت چطور بود؟</div>
+            <textarea name="comment" class="form-control" placeholder="اینجا بنویسید..."></textarea>
+            <div style="margin-top:10px;display:flex;align-items:center;gap:12px">
+              <label style="display:flex;align-items:center;gap:8px"><input type="checkbox" name="anonymous"> ارسال نظر به عنوان فرد ناشناس</label>
+            </div>
+          </div>
+
+         <div class="submit-row">
+    <div style="color:var(--muted);font-size:0.92rem">با ثبت نظر، قوانین را می‌پذیرم.</div>
+    <button class="btn" type="submit">ثبت تجربه شما</button>
+  </div>
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+
+<script>
+  // مدیریت دکمه پیشنهاد و نمایش کلی
+  function setRecommend(val){
+    document.getElementById('recommendInput').value = val ? 'yes' : 'no';
+    document.getElementById('recYes').classList.toggle('ghost', !val);
+    document.getElementById('recNo').classList.toggle('ghost', val);
+  }
+
+  // تابع برای بروزرسانی ستاره‌ها
+  function updateStars(groupName, selectedValue, scoreId, labelId){
+    var stars = document.querySelectorAll('input[name="'+groupName+'"]');
+    stars.forEach(function(star){
+      var starVal = parseInt(star.value,10);
+      var svg = star.nextElementSibling.querySelector('svg');
+      if(starVal <= selectedValue){
+        svg.style.fill = '#f0a63a';
+        svg.style.opacity = '1';
+        svg.style.transform = 'scale(1.05)';
+      } else {
+        svg.style.fill = 'var(--blue)';
+        svg.style.opacity = '0.12';
+        svg.style.transform = 'scale(1)';
+      }
+    });
+    // بروزرسانی متن و عدد (برای overall)
+    if(scoreId){
+      document.getElementById(scoreId).textContent = selectedValue.toFixed(1);
+    }
+    if(labelId){
+      var label = {
+        5:'عالی',
+        4:'خیلی خوب',
+        3:'متوسط',
+        2:'ضعیف',
+        1:'خیلی ضعیف'
+      }[selectedValue] || 'امتیاز کلی';
+      document.getElementById(labelId).textContent = label;
+    }
+  }
+
+  // ستاره‌های overall
+  document.querySelectorAll('input[name="overall"]').forEach(function(r){
+    r.addEventListener('change', function(){
+      updateStars('overall', parseInt(this.value,10), 'avgScore', 'overallLabel');
+    });
+  });
+
+  // ستاره‌های معیارها
+  {% for crit in criteria %}
+    document.querySelectorAll('input[name="crit_{{ forloop.counter }}"]').forEach(function(r){
+      r.addEventListener('change', function(){
+        updateStars('crit_{{ forloop.counter }}', parseInt(this.value,10));
+      });
+    });
+  {% endfor %}
+
+  // بار پیشرفت‌ها
+  document.addEventListener('DOMContentLoaded', function(){
+    document.querySelectorAll('.progress > i').forEach(function(el){
+      var w = el.style.width || '0%';
+      el.style.transition = 'width 700ms ease';
+      el.getBoundingClientRect();
+      el.style.width = w;
+    });
+  });
+ document.querySelector('.review-form').addEventListener('submit', function(e){
+  e.preventDefault(); // جلوگیری از رفرش
+
+  var form = e.target;
+  var data = new FormData(form);
+
+  fetch(form.action, {
+    method: 'POST',
+    body: data,
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest'
+    }
+  })
+  .then(response => {
+    if(response.ok){
+      alert('نظر شما ثبت شد!');
+      form.reset(); // پاک کردن فرم بعد از ارسال
+      // می‌تونی اینجا ستاره‌ها و انتخاب‌ها رو هم ریست کنی
+    } else {
+      alert('خطا در ثبت نظر.');
+    }
+  })
+  .catch(err => alert('خطا: ' + err));
+});
+function setRecommend(val){
+  document.getElementById('recommendInput').value = val ? 'yes' : 'no';
+  
+  // ست کردن radio واقعی
+  document.getElementById('recYesInput').checked = val;
+  document.getElementById('recNoInput').checked = !val;
+
+  // تغییر ظاهر دکمه‌ها
+  document.getElementById('recYes').classList.toggle('ghost', !val);
+  document.getElementById('recNo').classList.toggle('ghost', val);
+}
+</script>
+
+
+{% endblock content %}

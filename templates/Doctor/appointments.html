@@ -1,0 +1,64 @@
+<!-- لیست روزهای هفته -->
+<div class="days-container d-flex gap-2 mb-3">
+  {% for d in days %}
+    <div class="day-box {% if d.date == selected_date %}active{% endif %}"
+         onclick="loadAppointments('{{ doctor_id }}', '{{ d.date }}', this)">
+      <div class="fw-bold">{{ d.day_name }}</div>
+      <small>{{ d.shamsi_date }}</small>
+    </div>
+  {% endfor %}
+</div>
+
+<!-- لیست نوبت‌ها -->
+ {% if appointments %}
+        <div class="list-group">
+            {% for appointment in appointments %}
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+                <span>{{ appointment.date }} - {{ appointment.time }}</span>
+                <a href="{% url 'nobat' appointment.id %}" class="btn btn-success btn-sm">رزرو نوبت</a>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-muted">نوبت آزاد موجود نیست.</p>
+    {% endif %}
+</div>
+
+<!-- CSS -->
+<style>
+.days-container, .appointments {
+  display: flex;
+  overflow-x: auto;
+  gap: 8px;
+  padding-bottom: 5px;
+}
+
+.day-box, .time-box {
+  flex-shrink: 0;
+  min-width: 80px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #f1f1f1;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.day-box.active, .time-box.active {
+  background: #4cafef;
+  color: white;
+}
+
+.day-box:hover, .time-box:hover {
+  background: #ddd;
+}
+</style>
+
+<!-- JS -->
+<script>
+function goToBooking(appointmentId) {
+    const url = "{% url 'nobat' 0 %}".replace('/0/', '/' + appointmentId + '/');
+    window.location.href = url;
+}
+</script>
+

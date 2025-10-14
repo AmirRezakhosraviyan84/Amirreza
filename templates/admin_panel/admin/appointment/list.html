@@ -1,0 +1,70 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لیست نوبت  ها</title>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Alpine.js برای دارک مود -->
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/@alpinejs/persist@3.x.x/dist/cdn.min.js" defer></script>
+
+</head>
+<body 
+  x-data="{ darkMode: JSON.parse(localStorage.getItem('darkMode') || 'false') }"
+  x-init="$watch('darkMode', value => localStorage.setItem('darkMode', JSON.stringify(value)))"
+  :class="{'dark bg-gray-900 text-gray-100': darkMode, 'bg-gray-100 text-gray-900': !darkMode}"
+  class="min-h-screen"
+>
+
+<div class="container mx-auto p-4">
+    <div class="flex justify-between items-center mb-4">
+        <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-200">لیست  نوبت  ها</h1>
+        <a href="{% url 'appointment-add' %}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">افزودن نوبت</a>
+    </div>
+
+    {% if appoitments %}
+    <div class="overflow-x-auto bg-white dark:bg-gray-800 rounded-lg shadow">
+      <table class="min-w-full border-collapse">
+        <thead class="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200">
+            <tr>
+                <th class="px-4 py-2 border-b border-gray-200 dark:border-gray-600">شماره ردیف</th>
+                <th class="px-4 py-2 border-b border-gray-200 dark:border-gray-600">نام بیمه</th>
+                <th class="px-4 py-2 border-b border-gray-200 dark:border-gray-600">عملیات</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ap in appoitments %}
+            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                <td class="px-4 py-2 border-b border-gray-200 dark:border-gray-600">{{ forloop.counter }}</td>
+                <td class="px-4 py-2 border-b border-gray-200 dark:border-gray-600">{{ ap.name }}</td>
+                <td class="px-4 py-2 border-b border-gray-200 dark:border-gray-600 flex gap-2">
+                    <a href="{% url 'appointment-edit' ap.pk %}" class="bg-yellow-400 px-2 py-1 rounded hover:bg-yellow-500 text-white">ویرایش</a>
+                    <a href="{% url 'appointment-delete' ap.pk %}" class="bg-red-500 px-2 py-1 rounded hover:bg-red-600 text-white">حذف</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+        <p class="text-gray-500 dark:text-gray-400 mt-4">هیچ  نوبتی ثبت نشده است.</p>
+    {% endif %}
+</div>
+
+<!-- دکمه تغییر دارک مود -->
+<div class="fixed bottom-4 left-4">
+  <button 
+    @click="darkMode = !darkMode"
+    class="px-4 py-2 rounded bg-gray-700 dark:bg-gray-200 text-white dark:text-gray-900"
+  >
+    تغییر تم
+  </button>
+</div>
+
+</body>
+</html>

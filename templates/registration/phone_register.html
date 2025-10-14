@@ -1,0 +1,161 @@
+<!-- دکمه باز کردن پاپ‌آپ (می‌توان خودکار هم باز شود) -->
+<button id="openPopup" class="btn btn-primary">ثبت شماره موبایل</button>
+
+<!-- Overlay / Popup -->
+<div id="popupOverlay" class="overlay">
+  <div class="popup">
+    <span id="closePopup" class="close-btn">&times;</span>
+
+    <!-- مرحله 1: شماره موبایل -->
+    <div id="stepPhone">
+      <h2 class="text-center mb-3">ثبت شماره موبایل</h2>
+      <form id="phoneForm" class="text-center">
+        {% csrf_token %}
+        {{ form.phone_number }}
+        <button type="submit" class="btn btn-success mt-2">ارسال کد</button>
+      </form>
+      <div id="phoneErr" class="text-center text-danger mt-2"></div>
+    </div>
+
+    <!-- مرحله 2: OTP -->
+    <div id="stepOtp" style="display:none;">
+      <h2 class="text-center mb-3">تایید شماره موبایل</h2>
+      <div class="text-center mb-3">
+          <span id="countdown">60</span> ثانیه تا انقضای کد
+      </div>
+
+      <form id="otpForm" class="text-center">
+        {% csrf_token %}
+        <input type="hidden" id="userId" value="">
+        <div class="otp-inputs d-flex justify-content-center gap-2 mb-3">
+            <input type="text" maxlength="1" class="otp-inputbar">
+            <input type="text" maxlength="1" class="otp-inputbar">
+            <input type="text" maxlength="1" class="otp-inputbar">
+            <input type="text" maxlength="1" class="otp-inputbar">
+            <input type="text" maxlength="1" class="otp-inputbar">
+            <input type="text" maxlength="1" class="otp-inputbar">
+        </div>
+        <button type="button" id="verifyOtpBtn" class="btn btn-primary">تایید</button>
+      </form>
+
+      <form method="GET" id="resendOtpForm" class="text-center mt-2">
+          <button id="resendBtn" type="submit" disabled class="btn btn-secondary">ارسال دوباره کد</button>
+      </form>
+      <div id="otpErr" class="text-center text-danger mt-2"></div>
+    </div>
+  </div>
+</div>
+
+<style>
+/* Overlay / Popup */
+.overlay {
+  position: fixed; display: none; top:0; left:0; width:100%; height:100%;
+  background: rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center;
+}
+.popup {
+  background:#fff; padding:30px; border-radius:12px; max-width:400px; width:90%; position:relative;
+  transition: all 0.3s ease-in-out;
+}
+.close-btn { position:absolute; top:10px; right:15px; font-size:24px; cursor:pointer; }
+
+.otp-inputbar { width:50px; height:50px; border-radius:10px; text-align:center; font-size:20px; margin-right:8px; border:1px solid #ccc; }
+.otp-inputs input:last-child { margin-right:0; }
+button:focus,input:focus{outline:none;box-shadow:none;}
+#phoneErr,#otpErr{color:red;}
+@media(max-width:576px){.otp-inputbar{width:40px;height:40px;font-size:18px;}}
+</style>
+
+<script>
+// ======= باز و بسته کردن پاپ آپ =======
+const overlay = document.getElementById('popupOverlay');
+document.getElementById('openPopup').addEventListener('click',()=>{overlay.style.display='flex';});
+document.getElementById('closePopup').addEventListener('click',()=>{overlay.style.display='none';});
+window.addEventListener('click',(e)=>{if(e.target===overlay) overlay.style.display='none';});
+
+// ======= مرحله شماره موبایل =======
+const phoneForm = document.getElementById('phoneForm');
+const stepPhone = document.getElementById('stepPhone');
+const stepOtp = document.getElementById('stepOtp');
+const phoneErr = document.getElementById('phoneErr');
+const otpErr = document.getElementById('otpErr');
+
+phoneForm.addEventListener('submit',function(e){
+  e.preventDefault();
+  phoneErr.textContent='';
+  let formData = new FormData(this);
+
+  fetch("{% url 'register_phone' %}",{
+    method:"POST",
+    headers:{"X-CSRFToken":"{{ csrf_token }}"},
+    body: formData
+  })
+  .then(res=>res.json())
+  .then(data=>{
+      if(data.success){
+          document.getElementById('userId').value=data.user_id;
+          document.getElementById('resendOtpForm').action="#".replace('USERID',data.user_id);
+          stepPhone.style.display='none';
+          stepOtp.style.display='block';
+          startTimer();
+      }else{
+          phoneErr.textContent=JSON.stringify(data.errors);
+      }
+  })
+  .catch(err=>{
+      console.error(err);
+      phoneErr.textContent="خطا در ارتباط با سرور.";
+  });
+});
+
+// ======= تایمر =======
+let countdownElement = document.getElementById('countdown');
+let resendBtn = document.getElementById('resendBtn');
+let timerInterval;
+
+function startTimer(){
+    let timeLeft=60;
+    resendBtn.disabled=true;
+    countdownElement.textContent=timeLeft;
+    clearInterval(timerInterval);
+    timerInterval=setInterval(()=>{
+        if(timeLeft<=0){
+            clearInterval(timerInterval);
+            countdownElement.textContent="کد منقضی شد";
+            resendBtn.disabled=false;
+        }else{ countdownElement.textContent=timeLeft; timeLeft--; }
+    },1000);
+}
+
+// ======= OTP inputs =======
+const otpInputs=document.querySelectorAll('.otp-inputbar');
+otpInputs.forEach((input,index)=>{
+    input.addEventListener('input',()=>{
+        input.value=input.value.replace(/[^0-9]/g,'');
+        if(input.value.length===1 && index<otpInputs.length-1) otpInputs[index+1].focus();
+    });
+    input.addEventListener('keydown',(e)=>{
+        if(e.key==="Backspace" && input.value==="" && index>0) otpInputs[index-1].focus();
+    });
+});
+
+// ======= تایید OTP =======
+document.getElementById('verifyOtpBtn').addEventListener('click',function(e){
+    e.preventDefault();
+    otpErr.textContent='';
+    const userId=document.getElementById('userId').value;
+    let code=Array.from(otpInputs).map(i=>i.value).join('');
+    if(code.length!==6){ otpErr.textContent="لطفاً کد ۶ رقمی را کامل وارد کنید."; return; }
+
+    fetch("/accounts/verify-otp/"+userId+"/",{
+        method:"POST",
+        headers:{"Content-Type":"application/x-www-form-urlencoded","X-CSRFToken":"{{ csrf_token }}"},
+        body:"code="+encodeURIComponent(code)
+    })
+    .then(res=>res.json())
+    .then(data=>{
+        if(data.success){ window.location.href="{% url 'signup' %}"; }
+        else { otpErr.textContent=data.error; }
+    })
+    .catch(err=>{ console.error(err); otpErr.textContent="خطا در ارتباط با سرور."; });
+});
+</script>

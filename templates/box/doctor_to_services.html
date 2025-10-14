@@ -1,0 +1,369 @@
+{% extends '_base.html' %}
+{%load static%}
+
+
+{% block page_title %}
+doctor_to_services
+{% endblock page_title %}
+
+{% block content %}
+<!-- CSS Swiper -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css"/>
+
+<!-- JS Swiper -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+
+<div class="container-fluid p-0" style="margin-top: 70px;"> <!-- ارتفاع navbar -->
+  <img src="{% static 'images/offer-banner-2.jpg' %}" alt="My Image" style="width:100%; height:auto;">
+</div>
+
+<div style="width: 100%; margin-top: 5rem; margin-bottom: 6rem; text-align: right; padding-right: 30px;">
+    <h3 style="font-size: 1.25rem; font-weight: bold;">چه خدمتی نیاز دارید؟</h3>
+    <div class="swiper mySwiper">
+    <div class="swiper-wrapper">
+        {% for k in kh %}
+        <div class="swiper-slide">
+            <div class="info-box">
+                <img src="{{ k.image.url }}" alt="{{ k.name }}">
+                <a href="{% url 'doctor_to_services'  %}">{{ k.name }}</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev"></div>
+</div>
+
+</div>
+
+<div style="width: 100%; margin-top: 5rem; margin-bottom: 6rem; text-align: right; padding-right: 30px;">
+    <h3 style="font-size: 1.25rem; font-weight: bold;">خدمات پوست، مو و زیبایی</h3>
+
+    <div class="swiper mySwiper">
+        <div class="swiper-wrapper">
+            {% for z in zir_dan %}
+            <div class="swiper-slide">
+                <div class="team-member text-center">
+                    <img src="{{ z.image.url }}" alt="{{ z.name }}" style="max-width:100%; height:auto;">
+                    <p>{{ z.name }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- دکمه‌های کنترل -->
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-pagination"></div>
+    </div>
+</div>
+<div style="width: 100%; margin-top: 5rem; margin-bottom: 6rem; text-align: right; padding-right: 30px;">
+    <h3 style="font-size: 1.25rem; font-weight: bold;">پیشنهادهای پوست، مو و زیبایی</h3>
+<div class="swiper mySwiperPishnahad">
+  <div class="swiper-wrapper">
+    {% for p in khadamat_obj.pishnahad_ha.all %}
+      <div class="swiper-slide">
+        <div class="pishnahad-box text-center">
+          <div class="pishnahad-images">
+            {% for img in p.images.all %}
+              <img src="#" alt="{{ p.title }}">
+            {% endfor %}
+          </div>
+          <h6>{{ p.title }}</h6>
+          <p>دکتر: {{ p.doctor.name }}</p>
+          <p>-----------------</p>
+          <p>قیمت: {{ p.price }} تومان</p>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+  <div class="swiper-button-next"></div>
+  <div class="swiper-button-prev"></div>
+  <div class="swiper-pagination"></div>
+</div>
+
+
+  <script>
+var swiper = new Swiper(".mySwiperPishnahad", {
+    slidesPerView: 3,
+    spaceBetween: 25 ,
+    loop: true,
+    navigation: {
+      nextEl: ".swiper-button-next",
+      prevEl: ".swiper-button-prev",
+    },
+    pagination: {
+      el: ".swiper-pagination",
+      clickable: true,
+    },
+    breakpoints: {
+      320: { slidesPerView: 1, spaceBetween: 20 },
+      768: { slidesPerView: 2, spaceBetween: 25 },
+      1024: { slidesPerView: 3, spaceBetween: 30 },
+    }
+});
+</script>
+  </div>
+
+<div style="width: 100%; margin-top: 5rem; margin-bottom: 6rem; text-align: right; padding-right: 30px;">
+    <h3 style="font-size: 1.25rem; font-weight: bold;">خدمات دندانپزشکی</h3>
+  
+  
+  
+      <div class="swiper mySwiper">
+        <div class="swiper-wrapper">
+            {% for z in zir_gorooh %}
+            <div class="swiper-slide">
+                <div class="team-member text-center">
+                    <img src="#" alt="{{ z.name }}" style="max-width:100%; height:auto;">
+                    <p>{{ z.name }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- دکمه‌های کنترل -->
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-pagination"></div>
+    </div>  
+  
+  
+  </div>
+
+<div style="width: 100%; margin-top: 5rem; margin-bottom: 6rem; text-align: right; padding-right: 30px;">
+    <h3 style="font-size: 1.25rem; font-weight: bold;">پیشنهادهای دندانپزشکی </h3>
+<div class="swiper mySwiperPishnahad">
+  <div class="swiper-wrapper">
+    {% for p in khadamat_obj2.pishnahad_ha.all %}
+      <div class="swiper-slide">
+        <div class="pishnahad-box text-center">
+          <div class="pishnahad-images">
+            {% for img in p.images.all %}
+              <img src="#" alt="{{ p.title }}">
+            {% endfor %}
+          </div>
+          <h6>{{ p.title }}</h6>
+          <p>دکتر: {{ p.doctor.name }}</p>
+          <p>-------------------------------------------------------</p>
+          <p>قیمت: {{ p.price }} تومان</p>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+  <div class="swiper-button-next"></div>
+  <div class="swiper-button-prev"></div>
+  <div class="swiper-pagination"></div>
+</div>
+  <script>
+var swiper = new Swiper(".mySwiperPishnahad", {
+    slidesPerView: 3,
+    spaceBetween: 25 ,
+    loop: true,
+    navigation: {
+      nextEl: ".swiper-button-next",
+      prevEl: ".swiper-button-prev",
+    },
+    pagination: {
+      el: ".swiper-pagination",
+      clickable: true,
+    },
+    breakpoints: {
+      320: { slidesPerView: 1, spaceBetween: 20 },
+      768: { slidesPerView: 2, spaceBetween: 25 },
+      1024: { slidesPerView: 3, spaceBetween: 30 },
+    }
+});
+</script>
+  </div>
+
+
+
+<div style="width: 100%; margin-top: 5rem; margin-bottom: 6rem; text-align: right; padding-right: 5px;">
+    <h3 style="font-size: 1.25rem; font-weight: bold;">پیشنهادهای روانشناسی</h3>
+<div class="swiper mySwiperPishnahad">
+  <div class="swiper-wrapper">
+    {% for p in khadamat_obj3.pishnahad_ha.all %}
+      <div class="swiper-slide">
+        <div class="pishnahad-box text-center">
+          <div class="pishnahad-images">
+            {% for img in p.images.all %}
+              <img src="#" alt="{{ p.title }}">
+            {% endfor %}
+          </div>
+          <h6>{{ p.title }}</h6>
+          <p>دکتر: {{ p.doctor.name }}</p>
+          <p>-----------------</p>
+          <p>قیمت: {{ p.price }} تومان</p>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+  <div class="swiper-button-next"></div>
+  <div class="swiper-button-prev"></div>
+  <div class="swiper-pagination"></div>
+</div>
+  <script>
+var swiper = new Swiper(".mySwiperPishnahad", {
+    slidesPerView: 3,
+    spaceBetween: 25 ,
+    loop: true,
+    navigation: {
+      nextEl: ".swiper-button-next",
+      prevEl: ".swiper-button-prev",
+    },
+    pagination: {
+      el: ".swiper-pagination",
+      clickable: true,
+    },
+    breakpoints: {
+      320: { slidesPerView: 1, spaceBetween: 20 },
+      768: { slidesPerView: 2, spaceBetween: 25 },
+      1024: { slidesPerView: 3, spaceBetween: 30 },
+    }
+});
+</script>
+  </div>
+
+
+<div style="width: 100%; margin-top: 5rem; margin-bottom: 6rem; text-align: right; padding-right: 5px;">
+    <h3 style="font-size: 1.25rem; font-weight: bold;">پیشنهادهای چشم پزشکی </h3>
+<div class="swiper mySwiperPishnahad">
+  <div class="swiper-wrapper">
+    {% for p in khadamat_obj4.pishnahad_ha.all %}
+      <div class="swiper-slide">
+        <div class="pishnahad-box text-center">
+          <div class="pishnahad-images">
+            {% for img in p.images.all %}
+              <img src="#" alt="{{ p.title }}">
+            {% endfor %}
+          </div>
+          <h6>{{ p.title }}</h6>
+          <p>دکتر: {{ p.doctor.name }}</p>
+          <p>-----------------</p>
+          <p>قیمت: {{ p.price }} تومان</p>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+  <div class="swiper-button-next"></div>
+  <div class="swiper-button-prev"></div>
+  <div class="swiper-pagination"></div>
+</div>
+
+  <script>
+var swiper = new Swiper(".mySwiperPishnahad", {
+    slidesPerView: 3,
+    spaceBetween: 25 ,
+    loop: true,
+    navigation: {
+      nextEl: ".swiper-button-next",
+      prevEl: ".swiper-button-prev",
+    },
+    pagination: {
+      el: ".swiper-pagination",
+      clickable: true,
+    },
+    breakpoints: {
+      320: { slidesPerView: 1, spaceBetween: 20 },
+      768: { slidesPerView: 2, spaceBetween: 25 },
+      1024: { slidesPerView: 3, spaceBetween: 30 },
+    }
+});
+</script>
+  </div>
+
+<div style="width: 100%; margin-top: 5rem; margin-bottom: 6rem; text-align: right; padding-right: 5px;">
+    <h3 style="font-size: 1.25rem; font-weight: bold;">پیشنهادهای  اورولوژی </h3>
+<div class="swiper mySwiperPishnahad">
+  <div class="swiper-wrapper">
+    {% for p in khadamat_obj5.pishnahad_ha.all %}
+      <div class="swiper-slide">
+        <div class="pishnahad-box text-center">
+          <div class="pishnahad-images">
+            {% for img in p.images.all %}
+              <img src="#" alt="{{ p.title }}">
+            {% endfor %}
+          </div>
+          <h6>{{ p.title }}</h6>
+          <p>دکتر: {{ p.doctor.name }}</p>
+          <p>-----------------</p>
+          <p>قیمت: {{ p.price }} تومان</p>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+  <div class="swiper-button-next"></div>
+  <div class="swiper-button-prev"></div>
+  <div class="swiper-pagination"></div>
+</div>
+  <script>
+var swiper = new Swiper(".mySwiperPishnahad", {
+    slidesPerView: 3,
+    spaceBetween: 25 ,
+    loop: true,
+    navigation: {
+      nextEl: ".swiper-button-next",
+      prevEl: ".swiper-button-prev",
+    },
+    pagination: {
+      el: ".swiper-pagination",
+      clickable: true,
+    },
+    breakpoints: {
+      320: { slidesPerView: 1, spaceBetween: 20 },
+      768: { slidesPerView: 2, spaceBetween: 25 },
+      1024: { slidesPerView: 3, spaceBetween: 30 },
+    }
+});
+</script>
+  </div>
+
+
+<div style="width: 100%; margin-top: 5rem; margin-bottom: 6rem; text-align: right; padding-right: 5px;">
+    <h3 style="font-size: 1.25rem; font-weight: bold;">پیشنهادهای  جراحی بینی </h3>
+<div class="swiper mySwiperPishnahad">
+  <div class="swiper-wrapper">
+    {% for p in khadamat_obj6.pishnahad_ha.all %}
+      <div class="swiper-slide">
+        <div class="pishnahad-box text-center">
+          <div class="pishnahad-images">
+            {% for img in p.images.all %}
+              <img src="#" alt="{{ p.title }}">
+            {% endfor %}
+          </div>
+          <h6>{{ p.title }}</h6>
+          <p>دکتر: {{ p.doctor.name }}</p>
+          <p>-----------------</p>
+          <p>قیمت: {{ p.price }} تومان</p>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+  <div class="swiper-button-next"></div>
+  <div class="swiper-button-prev"></div>
+  <div class="swiper-pagination"></div>
+</div>
+  <script>
+var swiper = new Swiper(".mySwiperPishnahad", {
+    slidesPerView: 3,
+    spaceBetween: 25 ,
+    loop: true,
+    navigation: {
+      nextEl: ".swiper-button-next",
+      prevEl: ".swiper-button-prev",
+    },
+    pagination: {
+      el: ".swiper-pagination",
+      clickable: true,
+    },
+    breakpoints: {
+      320: { slidesPerView: 1, spaceBetween: 20 },
+      768: { slidesPerView: 2, spaceBetween: 25 },
+      1024: { slidesPerView: 3, spaceBetween: 30 },
+    }
+});
+</script>
+  </div>
+
+{% endblock content %}
