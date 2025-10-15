@@ -120,7 +120,7 @@ User = get_user_model()
 
 class UserOTP(models.Model):
         user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
-        code = models.CharField(default='123456')
+        code = models.CharField(default='123456' , max_length=6)
         phone_number = models.CharField(max_length=14)  # به جای PhoneNumberField
         created_at = models.DateTimeField(auto_now_add=True)
         user_type =models.CharField(max_length=10,  null=True , blank=True , choices=(('user','User'), ('doctor','Doctor')))
